@@ -50,7 +50,7 @@
 </sc-for>
 </div>
 </div>
-<div style="font-size:13px;color:#8F887E">Lunes cerrado.</div>
+<div style="font-size:13px;color:#8F887E">Abierto todos los días.</div>
 </section>
 
 <section style="display:flex;flex-direction:column;gap:18px">
@@ -115,10 +115,10 @@ class Component extends DCLogic {
     for (let i = 0; i < lead; i++) days.push({ num: '', off: true, op: 1, vis: 'hidden', bg: 'transparent', col: '#F3EEE6', fw: 400, pick: null });
     for (let n = 1; n <= dim; n++) {
       const d = new Date(first.getFullYear(), first.getMonth(), n), ts = d.getTime();
-      const off = ts < t0.getTime() || d.getDay() === 1, on = ts === s.day;
+      const off = ts < t0.getTime(), on = ts === s.day;
       days.push({ num: n, off, op: off ? .25 : 1, vis: 'visible', bg: on ? RED : 'transparent', col: on ? '#F3EEE6' : (ts === t0.getTime() ? '#C9A45C' : '#F3EEE6'), fw: on || ts === t0.getTime() ? 600 : 400, pick: () => set({ day: ts }) });
     }
-    const lunchCheap = sel && sel.getDay() >= 2 && sel.getDay() <= 5;
+    const lunchCheap = sel && sel.getDay() >= 1 && sel.getDay() <= 5;
     const mk = arr => arr.map(t => ({ t, bg: s.time === t ? RED : 'transparent', bd: s.time === t ? RED : LINE, pick: () => set({ time: t }) }));
     const shifts = [
       { label: 'MEDIODÍA', price: sel ? (lunchCheap ? '16,95 € adulto' : '22,95 € adulto') : '', slots: mk(['12:30','12:45','13:00','13:15','13:30','13:45','14:00','14:15','14:30','14:45','15:00','15:15','15:30']) },
