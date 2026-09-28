@@ -190,6 +190,7 @@
     'Brocheta de salmón': ['Broqueta de salmó', 'Salmon skewer', 'Brochette de saumon'],
     'Brocheta de atún': ['Broqueta de tonyina', 'Tuna skewer', 'Brochette de thon'],
     'Navajas': ['Navalles', 'Razor clams', 'Couteaux'],
+    'Rejos': ['Rejos', 'Squid tentacles', 'Tentacules de calamar'],
     'Espárragos': ['Espàrrecs', 'Asparagus', 'Asperges'],
     'Gambas picantes': ['Gambes picants', 'Spicy shrimp', 'Crevettes épicées'],
     'Ternera con salsa de ostras': ['Vedella amb salsa d’ostres', 'Beef in oyster sauce', 'Bœuf sauce huître'],
