@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /privado-platos.dc.html
+
+Sitemap: https://hanakisalou.com/sitemap.xml
