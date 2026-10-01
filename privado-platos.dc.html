@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="icon" type="image/png" href="assets/hanaki-logo.png"><link rel="apple-touch-icon" href="assets/hanaki-logo.png"><meta name="robots" content="noindex,nofollow"><script src="./platos-data.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap"><style>body{margin:0;background:#0B0B0B;color:#F3EEE6;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#C9A45C;text-decoration:none}a:hover{color:#F3EEE6}html,body{height:auto!important}body>div,.sc-host{height:auto!important}@page{size:A4;margin:10mm}@media print{body{background:#fff;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}[data-noprint]{display:none!important}[data-card]{break-inside:avoid;background:#fff!important;border-color:#ddd!important}[data-card] *{color:#111!important}[data-grid]{grid-template-columns:repeat(4,1fr)!important;gap:8px!important}[data-wrap]{padding:0!important}}</style></helmet>
+<div data-wrap="1" style="max-width:1400px;margin:0 auto;padding:32px clamp(16px,4vw,48px) 60px">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-size:11px;font-weight:600;letter-spacing:.28em;color:#C9A45C">USO INTERNO</div>
+<h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(30px,3.4vw,44px)">Hanaki · Todos los platos</h1>
+<div style="font-size:13px;color:#8F887E">{{ count }} platos · ordenados por número</div>
+</div>
+<div data-noprint="1" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<input value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar nº o nombre" style="background:#131313;border:1px solid rgba(243,238,230,.2);color:#F3EEE6;padding:12px 14px;font:inherit;font-size:13px;width:200px;outline:none">
+<button onClick="{{ toggleNoPh }}" style="background:{{ fBg }};border:1px solid rgba(201,164,92,.6);color:{{ fCol }};padding:12px 16px;font:inherit;font-size:11.5px;font-weight:600;letter-spacing:.18em;cursor:pointer">SIN FOTO ({{ noPhCount }})</button>
+<button onClick="{{ print }}" style="background:transparent;border:1px solid #C9A45C;color:#C9A45C;padding:12px 20px;font:inherit;font-size:11.5px;font-weight:600;letter-spacing:.2em;cursor:pointer" style-hover="background:#C9A45C;color:#0B0B0B">DESCARGAR PDF</button>
+</div>
+</div>
+<div data-grid="1" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+<sc-for list="{{ items }}" as="d" hint-placeholder-count="12">
+<div data-card="1" style="background:#131313;border:1px solid rgba(243,238,230,.08);display:flex;flex-direction:column">
+<div style="position:relative;aspect-ratio:1;background:#1A1A1A;overflow:hidden">
+<sc-if value="{{ d.hasPh }}" hint-placeholder-val="{{ true }}"><img src="{{ d.ph }}" alt="{{ d.n }}" loading="eager" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if>
+<sc-if value="{{ d.noPh }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.2em;color:#8F887E">SIN FOTO</div></sc-if>
+<div style="position:absolute;left:0;top:0;background:#7A1C1C;color:#F3EEE6;padding:6px 10px;font-size:15px;font-weight:600">{{ d.no }}</div>
+</div>
+<div style="padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px">
+<div style="font-size:10px;letter-spacing:.2em;color:#C9A45C">{{ d.cat }}</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:19px;line-height:1.15">{{ d.n }}</div>
+<sc-if value="{{ d.hasU }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#8F887E;line-height:1.4">{{ d.u }}</div></sc-if>
+<sc-if value="{{ d.hasAl }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px"><sc-for list="{{ d.ics }}" as="ic" hint-placeholder-count="2"><img src="{{ ic.src }}" alt="{{ ic.t }}" title="{{ ic.t }}" style="width:18px;height:18px"></sc-for></div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: '', onlyNoPh: false, ok: !!window.HANAKI_PLATOS };
+  componentDidMount() { if (!this.state.ok) { const t = setInterval(() => { if (window.HANAKI_PLATOS) { clearInterval(t); this.setState({ ok: true }); } }, 50); } }
+  all() {
+    const D = window.HANAKI_PLATOS; if (!D) return [];
+    const out = [];
+    D.CATS.forEach((c, i) => c.items.forEach(([n, u], j) => {
+      const no = (D.NUMS[i] || [])[j]; const num = String(no || D.NUMN[n] || '');
+      const ph = no && D.IMGS.includes(no) ? 'assets/platos/' + no + '.jpg' : (D.NIMGS[n] || '');
+      const txt = (n + ' ' + (u || '')).toLowerCase(); const ex = [];
+      if (/cerdo/.test(txt)) ex.push('Ce'); if (/ternera|filete|entrecot/.test(txt)) ex.push('T'); if (/cordero/.test(txt)) ex.push('Co'); if (/pollo/.test(txt)) ex.push('Po');
+      const keys = ((no ? D.AL[no] : D.ALN[n]) || '').split(' ').filter(Boolean).concat(ex);
+      const ics = keys.map(k => ({ src: 'assets/alergenos/' + D.ALC[k] + '.png', t: D.ALK[k] }));
+      out.push({ n, u: u || '', hasU: !!u, no: num || '—', sort: num ? parseInt(num, 10) + (/[A-Z]/i.test(num) ? .5 : 0) : 1e9, cat: c.name.toUpperCase(), ph, hasPh: !!ph, noPh: !ph, ics, hasAl: ics.length > 0 });
+    }));
+    return out.sort((a, b) => a.sort - b.sort || a.n.localeCompare(b.n));
+  }
+  renderVals() {
+    const s = this.state, all = this.all(), q = s.q.trim().toLowerCase();
+    const items = all.filter(d => (!s.onlyNoPh || d.noPh) && (!q || d.no.toLowerCase() === q || d.n.toLowerCase().includes(q)));
+    return {
+      items, count: items.length, noPhCount: all.filter(d => d.noPh).length, q: s.q,
+      onQ: e => this.setState({ q: e.target.value }),
+      toggleNoPh: () => this.setState({ onlyNoPh: !s.onlyNoPh }),
+      fBg: s.onlyNoPh ? '#C9A45C' : 'transparent', fCol: s.onlyNoPh ? '#0B0B0B' : '#C9A45C',
+      print: () => window.print()
+    };
+  }
+}
+</script>
+</body>
+</html>
