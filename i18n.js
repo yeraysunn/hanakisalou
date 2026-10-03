@@ -2,6 +2,9 @@
   if (window.HanakiI18n) return;
   const IX = { ca: 0, en: 1, fr: 2 };
   const D = {
+    "Comprueba si se ha enviado en WhatsApp": ["Comprova si s’ha enviat per WhatsApp","Check whether it was sent on WhatsApp","Vérifiez s’il a été envoyé sur WhatsApp"],
+    "¿Se te complica? Llámanos y te hacemos la reserva por teléfono.": ["Se’t complica? Truca’ns i et fem la reserva per telèfon.","Having trouble? Call us and we’ll book it for you by phone.","Un souci ? Appelez-nous et nous réservons pour vous par téléphone."],
+    "LLAMAR · 613 261 135": ["TRUCAR · 613 261 135","CALL · 613 261 135","APPELER · 613 261 135"],
     "Y una vez hecho, ¡gracias por su reserva!": ["I un cop fet, gràcies per la vostra reserva!","Once it’s sent, thank you for your booking!","Une fois envoyé, merci pour votre réservation !"],
     "Importante: tu reserva solo nos llega si envías el mensaje en WhatsApp. Después espera nuestra confirmación.": ["Important: la teva reserva només ens arriba si envies el missatge per WhatsApp. Després espera la nostra confirmació.","Important: we only receive your booking once you send the WhatsApp message. Then wait for our confirmation.","Important : nous ne recevons votre réservation que si vous envoyez le message WhatsApp. Attendez ensuite notre confirmation."],
     "Comprueba si se ha enviado. Si no, copia y pega este mensaje a": ["Comprova si s’ha enviat. Si no, copia i enganxa aquest missatge al","Check whether it was sent. If not, copy and paste this message to","Vérifiez s’il a été envoyé. Sinon, copiez-collez ce message au"],
