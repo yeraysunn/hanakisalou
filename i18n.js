@@ -2,6 +2,7 @@
   if (window.HanakiI18n) return;
   const IX = { ca: 0, en: 1, fr: 2 };
   const D = {
+    "Y una vez hecho, ¡gracias por su reserva!": ["I un cop fet, gràcies per la vostra reserva!","Once it’s sent, thank you for your booking!","Une fois envoyé, merci pour votre réservation !"],
     "Importante: tu reserva solo nos llega si envías el mensaje en WhatsApp. Después espera nuestra confirmación.": ["Important: la teva reserva només ens arriba si envies el missatge per WhatsApp. Després espera la nostra confirmació.","Important: we only receive your booking once you send the WhatsApp message. Then wait for our confirmation.","Important : nous ne recevons votre réservation que si vous envoyez le message WhatsApp. Attendez ensuite notre confirmation."],
     "Comprueba si se ha enviado. Si no, copia y pega este mensaje a": ["Comprova si s’ha enviat. Si no, copia i enganxa aquest missatge al","Check whether it was sent. If not, copy and paste this message to","Vérifiez s’il a été envoyé. Sinon, copiez-collez ce message au"],
     "Comprueba si se ha enviado.": ["Comprova si s’ha enviat.","Check whether it was sent.","Vérifiez s’il a été envoyé."],
