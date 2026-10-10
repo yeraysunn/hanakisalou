@@ -55,6 +55,26 @@
     var t = e.target.closest && e.target.closest('[data-cookie-settings]');
     if (t) { e.preventDefault(); close(); open(true); }
   });
+  // Google Analytics 4: solo se carga si el usuario acepta las cookies de análisis
+  var GA_ID = 'G-ER5LE98BPB';
+  var gaLoaded = false;
+  function loadGA() {
+    if (gaLoaded || !/^G-[A-Z0-9]+$/.test(GA_ID) || GA_ID === 'G-XXXXXXXXXX') return;
+    gaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { anonymize_ip: true });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+  if ((get() || {}).analiticas) loadGA();
+  window.addEventListener('hanaki-consent', function (e) {
+    if (e.detail && e.detail.analiticas) loadGA();
+    else if (gaLoaded) window['ga-disable-' + GA_ID] = true;
+  });
   var start = function () { document.head.appendChild(css); if (!get()) open(false); };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
