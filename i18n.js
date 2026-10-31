@@ -104,8 +104,6 @@
     'Abierto todos los días.': ['Obert cada dia.', 'Open every day.', 'Ouvert tous les jours.'],
     'Todos los días 12:30–16:30 · 19:30–23:30': ['Cada dia 12:30–16:30 · 19:30–23:30', 'Every day 12:30–16:30 · 19:30–23:30', 'Tous les jours 12:30–16:30 · 19:30–23:30'],
     'Lunes cerrado': ['Dilluns tancat', 'Closed on Mondays', 'Fermé le lundi'],
-    'Lunes cerrado hasta verano': ['Dilluns tancat fins a l’estiu', 'Closed on Mondays until summer', 'Fermé le lundi jusqu’à l’été'],
-    'Lunes cerrado hasta verano.': ['Dilluns tancat fins a l’estiu.', 'Closed on Mondays until summer.', 'Fermé le lundi jusqu’à l’été.'],
     'Martes a viernes': ['Dimarts a divendres', 'Tuesday to Friday', 'Du mardi au vendredi'],
     'Lunes cerrado.': ['Dilluns tancat.', 'Closed on Mondays.', 'Fermé le lundi.'],
     'UBICACIÓN': ['UBICACIÓ', 'LOCATION', 'ADRESSE'],
