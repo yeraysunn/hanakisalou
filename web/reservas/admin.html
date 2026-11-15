@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reservas · Panel Hanaki</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Reservas Hanaki">
+<link rel="icon" type="image/png" href="../fidelidad/icono.png">
+<link rel="apple-touch-icon" href="../fidelidad/icono.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Saira+Extra+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../fidelidad/estilo.css">
+<script src="/admin/i18n.js?v=20261113"></script>
+<script src="/admin/tabs.js?v=20261113"></script>
+<style>
+#idioma{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid rgba(243,239,232,.35);color:var(--txt-hi);padding:9px 12px;font-size:12px;font-weight:600;letter-spacing:.08em;cursor:pointer}#idioma:hover{border-color:var(--oro);color:var(--oro)}#idioma span{font:inherit;letter-spacing:inherit;color:inherit}
+.wrap{max-width:760px}
+.dia{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.dia button{width:48px;height:48px;border:1px solid var(--linea);background:var(--bg2);color:var(--txt-hi);font-size:18px;cursor:pointer}
+.dia input{flex:1;min-width:0;height:48px;box-sizing:border-box;background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:0 12px;color-scheme:dark}
+.dia .hoy{width:auto;padding:0 14px;font-size:11px;font-weight:600;letter-spacing:.16em}
+.titdia{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:30px;color:var(--txt-hi);margin:4px 0 4px}
+.resumen{font-size:14px;color:var(--muted);margin-bottom:18px}
+.aviso{border:1px solid rgba(224,69,46,.55);background:rgba(224,69,46,.12);padding:12px 14px;font-size:14px;margin-bottom:18px;line-height:1.6}
+.aviso button{background:none;border:none;color:var(--oro);text-decoration:underline;cursor:pointer;font:inherit;padding:0 2px}
+.turno{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;font-weight:600;letter-spacing:.24em;color:var(--oro2);margin:22px 0 10px;border-bottom:1px solid var(--linea);padding-bottom:8px}
+.turno span{letter-spacing:.06em;font-weight:500;color:var(--txt)}
+.res{border:1px solid var(--linea);background:var(--bg2);padding:14px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+.res.cancelada,.res.no_vino{opacity:.5}
+.res .h{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:30px;line-height:1;color:var(--txt-hi);grid-row:span 2}
+.res h3{margin:0;font-size:16px;font-weight:600;color:var(--txt-hi);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.res p{margin:0;font-size:13.5px;color:var(--txt);line-height:1.5}
+.res p a{color:var(--txt-hi)}
+.chip{font-size:10px;font-weight:600;letter-spacing:.12em;padding:3px 7px;border:1px solid currentColor}
+.e-pendiente{color:#E9B949}.e-confirmada{color:#5FB37A}.e-cancelada{color:#E36B74}.e-llego{color:#7FB2F0}.e-no_vino{color:#A9A39A}
+.tag{font-size:11px;padding:2px 7px;background:#2a2622;color:var(--oro);letter-spacing:.06em}
+.tag.cli{background:var(--rojo);color:var(--tinta);font-weight:600}
+.acc{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.acc .btn{width:auto;flex:1 1 120px;padding:12px 8px;font-size:10.5px;letter-spacing:.14em}
+.vacio{border:1px dashed var(--linea);padding:28px;text-align:center;color:var(--muted);font-size:14px}
+.cier{border:1px solid var(--linea);background:var(--bg2);margin-bottom:18px}
+.cier summary{list-style:none;cursor:pointer;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--txt-hi)}
+.cier summary::-webkit-details-marker{display:none}
+.cier summary span{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--muted)}
+.cier summary span.hay{color:#E36B74}
+.cier .in{padding:0 14px 14px}
+.cier .nota{font-size:13px;color:var(--muted);margin:0 0 6px;line-height:1.5}
+.cier .tt{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--oro2);margin:14px 0 8px}
+.cier .tt button,.cier .todo button{background:none;border:1px solid var(--linea);color:var(--txt-hi);padding:7px 10px;font-size:10px;font-weight:600;letter-spacing:.12em;cursor:pointer}
+.hrs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.hrs button{background:#0f0f0f;border:1px solid var(--linea);color:var(--txt-hi);padding:11px 0;font:600 17px/1 var(--num,inherit);cursor:pointer}
+.hrs button.off{background:rgba(227,107,116,.14);border-color:rgba(227,107,116,.6);color:#E36B74;text-decoration:line-through}
+.hrs button:disabled,.cier button:disabled{opacity:.5}
+.cier .todo{display:flex;gap:8px;margin-top:14px}.cier .todo button{flex:1;padding:12px 8px}
+#toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;background:#141414;border:1px solid var(--oro);color:var(--txt-hi);padding:14px 18px;font-size:14px;max-width:calc(100% - 32px);text-align:center}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="cab"><a href="/admin/"><img src="../assets/logo.png" alt="花木"><span>HANAKI</span></a><div style="display:flex;gap:8px"><button type="button" id="idioma"></button><button id="salir" class="btn sec" style="width:auto;padding:10px 14px;font-size:10px" hidden>SALIR</button></div></header>
+
+  <section id="panel" hidden>
+    <nav class="tabs" data-on="reservas"></nav>
+    <div class="dia">
+      <button type="button" id="ant" aria-label="Día anterior">‹</button>
+      <input type="date" id="fecha" aria-label="Día">
+      <button type="button" id="sig" aria-label="Día siguiente">›</button>
+      <button type="button" id="hoy" class="hoy">HOY</button>
+    </div>
+    <div class="titdia" id="titdia"></div>
+    <div class="resumen" id="resumen"></div>
+    <div id="avisos"></div>
+    <details class="cier" id="cier"><summary><b id="cier-t" style="font-weight:600">HORAS DE RESERVA</b><span id="cier-res"></span></summary><div class="in" id="cier-in"></div></details>
+    <div id="lista"></div>
+  </section>
+</main>
+<div id="toast" hidden></div>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'], MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var ESTADO = { pendiente: 'PENDIENTE', confirmada: 'CONFIRMADA', cancelada: 'CANCELADA', llego: 'HA LLEGADO', no_vino: 'NO VINO' };
+  var fechaSel = null, datos = [], hoy = null, conocidas = null, HORAS = null, cerradas = [];
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  var tt; function toast(m){ var t = $('toast'); t.textContent = T(m); t.hidden = false; clearTimeout(tt); tt = setTimeout(function(){ t.hidden = true; }, 3200); }
+  function largo(fe){ return HK_FECHA(fe); }
+  function mover(fe, n){ var p = fe.split('-').map(Number), d = new Date(p[0], p[1]-1, p[2] + n); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+
+  async function api(ruta, opt){
+    var r = await fetch(ruta, Object.assign({ headers:{'content-type':'application/json'}, cache:'no-store' }, opt || {}));
+    var j = await r.json().catch(function(){ return {}; });
+    if (r.status === 401) { mostrarLogin(); throw new Error(j.error || 'Sesión caducada'); }
+    if (!r.ok) throw new Error(j.error || 'Error');
+    return j;
+  }
+  // sin sesión → pantalla de bienvenida (allí se pone la contraseña)
+  function mostrarLogin(){ location.replace('/admin/?volver=reservas'); }
+  $('salir').onclick = async function(){ try { await fetch('/api/fidelidad/admin/login', { method:'DELETE' }); } catch(e){} location.replace('/admin/'); };
+
+  async function cargar(){
+    var j = await api('/api/reservas/admin/lista' + (fechaSel ? '?fecha=' + fechaSel : ''));
+    $('panel').hidden = false; $('salir').hidden = false;
+    hoy = j.hoy; fechaSel = j.fecha; datos = j.reservas; HORAS = j.horas; cerradas = j.cerradas || [];
+    // aviso de reservas nuevas mientras el panel está abierto
+    var ids = datos.map(function(r){ return r.id; });
+    if (conocidas && conocidas.fecha === fechaSel) { var nuevas = ids.filter(function(id){ return conocidas.ids.indexOf(id) < 0; }); if (nuevas.length) { toast(T('Nueva reserva ({n})', {n: nuevas.length})); if (navigator.vibrate) navigator.vibrate([80,60,80]); } }
+    conocidas = { fecha: fechaSel, ids: ids };
+    pintar(j.pendientes); pintarCierres();
+  }
+
+  function pintar(pendientes){
+    $('fecha').value = fechaSel;
+    var tl = largo(fechaSel); $('titdia').textContent = (fechaSel === hoy ? T('Hoy · ') : fechaSel === mover(hoy, 1) ? T('Mañana · ') : '') + tl.charAt(0).toUpperCase() + tl.slice(1);
+    var activas = datos.filter(function(r){ return r.estado !== 'cancelada' && r.estado !== 'no_vino'; });
+    var pers = function(lst){ return lst.reduce(function(s, r){ return s + r.adultos + r.ninos + r.bebes; }, 0); };
+    $('resumen').textContent = T(activas.length === 1 ? '{n} reserva · {p} personas' : '{n} reservas · {p} personas', {n: activas.length, p: pers(activas)});
+    var otras = (pendientes || []).filter(function(p){ return p.fecha !== fechaSel; });
+    $('avisos').innerHTML = otras.length ? '<div class="aviso">' + T('Pendientes de confirmar en otros días: ') + otras.map(function(p){ return '<button type="button" data-ir="' + p.fecha + '">' + largo(p.fecha) + ' (' + p.n + ')</button>'; }).join(', ') + '</div>' : '';
+    if (!datos.length) { $('lista').innerHTML = '<div class="vacio">' + T('No hay reservas este día.') + '</div>'; return; }
+    var grupos = [['MEDIODÍA', datos.filter(function(r){ return r.hora < '17:00'; })], ['NOCHE', datos.filter(function(r){ return r.hora >= '17:00'; })]];
+    $('lista').innerHTML = grupos.filter(function(g){ return g[1].length; }).map(function(g){
+      var act = g[1].filter(function(r){ return r.estado !== 'cancelada' && r.estado !== 'no_vino'; });
+      return '<div class="turno">' + T(g[0]) + '<span>' + T('{p} personas', {p: pers(act)}) + '</span></div>' + g[1].map(tarjeta).join('');
+    }).join('');
+  }
+
+  function tarjeta(r){
+    var p = [T(r.adultos === 1 ? '{n} adulto' : '{n} adultos', {n: r.adultos})]; if (r.ninos) p.push(T(r.ninos === 1 ? '{n} niño' : '{n} niños', {n: r.ninos})); if (r.bebes) p.push(T(r.bebes === 1 ? '{n} bebé' : '{n} bebés', {n: r.bebes}));
+    var tags = (r.por_cliente ? '<span class="tag cli">' + T(r.estado === 'cancelada' ? 'CANCELADA POR EL CLIENTE' : 'CAMBIADA POR EL CLIENTE') + '</span>' : '') + (r.cumple ? '<span class="tag">' + T('CUMPLEAÑOS') + '</span>' : '') + (r.trona ? '<span class="tag">' + T('TRONA') + '</span>' : '') + (r.carrito ? '<span class="tag">' + T('CARRITO') + '</span>' : '');
+    var b = function(est, txt, cls){ return '<button type="button" class="btn ' + (cls || 'sec') + '" data-id="' + r.id + '" data-e="' + est + '">' + T(txt) + '</button>'; };
+    var acc = r.estado === 'pendiente' ? b('confirmada', 'CONFIRMAR', '') + b('cancelada', 'CANCELAR')
+      : r.estado === 'confirmada' ? b('llego', 'HA LLEGADO', 'oro') + b('no_vino', 'NO VINO') + b('cancelada', 'CANCELAR')
+      : b(r.estado === 'cancelada' ? 'pendiente' : 'confirmada', 'DESHACER');
+    return '<div class="res ' + r.estado + '"><div class="h">' + r.hora + '</div>' +
+      '<h3>' + esc(r.nombre) + ' <span class="chip e-' + r.estado + '">' + T(ESTADO[r.estado]) + '</span>' + tags + '</h3>' +
+      '<p><b style="color:var(--txt-hi)">' + (r.adultos + r.ninos + r.bebes) + ' ' + T('pers.') + '</b> · ' + p.join(', ') + ' · <a href="tel:' + esc(r.telefono) + '">' + esc(r.telefono) + '</a>' + (r.email ? ' · ' + esc(r.email) : '') + '</p>' +
+      (r.comentarios ? '<p style="grid-column:1/-1;color:var(--txt-hi);font-style:italic">«' + esc(r.comentarios) + '»</p>' : '') +
+      '<div class="acc">' + acc + '</div></div>';
+  }
+
+  $('lista').addEventListener('click', async function(e){
+    var b = e.target.closest('button[data-e]'); if (!b) return;
+    var r = datos.find(function(x){ return x.id === +b.dataset.id; }), est = b.dataset.e;
+    if (est === 'cancelada' && !confirm(T('¿Cancelar la reserva de {n}?', {n: r.nombre}) + (r.email ? T(' Se le enviará un email.') : ''))) return;
+    b.disabled = true;
+    try {
+      var j = await api('/api/reservas/admin/estado', { method:'POST', body: JSON.stringify({ id: r.id, estado: est }) });
+      toast(T(ESTADO[est]) + ' · ' + r.nombre + (j.email === true ? T(' · email enviado') : j.email === 'error' ? T(' · no se pudo enviar el email') : ''));
+      cargar();
+    } catch(ex){ toast(ex.message); b.disabled = false; }
+  });
+
+  // ---------- cerrar / abrir horas de reserva del día ----------
+  var diaCierre = null;
+  function pintarCierres(){
+    if (!HORAS) return;
+    if (diaCierre !== fechaSel) { diaCierre = fechaSel; $('cier').open = cerradas.length > 0; }
+    var total = HORAS.mediodia.length + HORAS.noche.length, n = cerradas.length;
+    $('cier-t').textContent = T('HORAS DE RESERVA');
+    $('cier-res').className = n ? 'hay' : '';
+    $('cier-res').textContent = !n ? T('Todas abiertas') : n === total ? T('Día cerrado') : T(n === 1 ? '{n} cerrada' : '{n} cerradas', {n: n});
+    var turno = function(t, nom){
+      var hs = HORAS[t], todas = hs.every(function(h){ return cerradas.indexOf(h) >= 0; });
+      return '<div class="tt">' + T(nom) + '<button type="button" data-hs="' + hs.join(',') + '" data-c="' + (todas ? 0 : 1) + '">' + T(todas ? 'ABRIR TURNO' : 'CERRAR TURNO') + '</button></div>' +
+        '<div class="hrs">' + hs.map(function(h){ var off = cerradas.indexOf(h) >= 0; return '<button type="button" class="' + (off ? 'off' : '') + '" data-hs="' + h + '" data-c="' + (off ? 0 : 1) + '">' + h + '</button>'; }).join('') + '</div>';
+    };
+    var todas = HORAS.mediodia.concat(HORAS.noche);
+    $('cier-in').innerHTML = '<p class="nota">' + T('Toca una hora para cerrarla o volver a abrirla. Las horas cerradas no se pueden reservar en la web.') + '</p>' +
+      turno('mediodia', 'MEDIODÍA') + turno('noche', 'NOCHE') +
+      '<div class="todo"><button type="button" data-hs="' + todas.join(',') + '" data-c="1"' + (n === total ? ' disabled' : '') + '>' + T('CERRAR TODO EL DÍA') + '</button><button type="button" data-hs="' + todas.join(',') + '" data-c="0"' + (!n ? ' disabled' : '') + '>' + T('ABRIR TODO') + '</button></div>';
+  }
+  $('cier-in').addEventListener('click', async function(e){
+    var b = e.target.closest('button[data-hs]'); if (!b || b.disabled) return;
+    var horas = b.dataset.hs.split(','), cerrar = b.dataset.c === '1';
+    b.disabled = true;
+    try {
+      var j = await api('/api/reservas/admin/cierres', { method:'POST', body: JSON.stringify({ fecha: fechaSel, horas: horas, cerrar: cerrar }) });
+      cerradas = j.cerradas; pintarCierres();
+      toast(horas.length === 1 ? (cerrar ? T('{h} cerrada', {h: horas[0]}) : T('{h} abierta', {h: horas[0]})) : (cerrar ? T('Horas cerradas') : T('Horas abiertas')));
+    } catch(ex){ toast(ex.message); b.disabled = false; }
+  });
+
+  $('avisos').addEventListener('click', function(e){ var b = e.target.closest('[data-ir]'); if (b) { fechaSel = b.dataset.ir; cargar(); } });
+  $('fecha').addEventListener('change', function(){ if ($('fecha').value) { fechaSel = $('fecha').value; cargar(); } });
+  $('ant').onclick = function(){ fechaSel = mover(fechaSel, -1); cargar(); };
+  $('sig').onclick = function(){ fechaSel = mover(fechaSel, 1); cargar(); };
+  $('hoy').onclick = function(){ fechaSel = null; cargar(); };
+  setInterval(function(){ if (!document.hidden && !$('panel').hidden) cargar().catch(function(){}); }, 30000);
+  cargar().catch(function(){});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reservar mesa · Hanaki Salou</title>
+<meta name="description" content="Reserva tu mesa en Hanaki Salou, buffet libre japonés en el centro de Salou.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Saira+Extra+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../fidelidad/estilo.css">
+<style>
+.horas{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.horas button{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:12px 0;cursor:pointer;font-size:15px}
+.horas button[aria-pressed="true"]{background:var(--rojo);border-color:var(--rojo)}
+.sinhoras{grid-column:1/-1;margin:0;font-size:14px;color:var(--muted);line-height:1.5}.sinhoras a{color:var(--txt-hi)}
+.horas button:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.turno{font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--oro2);margin:12px 0 8px}
+.pers{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--linea)}
+.pers b{display:block;color:var(--txt-hi);font-weight:500;font-size:15px}
+.pers small{font-size:12.5px;color:var(--muted)}
+.step{display:flex;align-items:center;gap:14px}
+.step button{width:44px;height:44px;border:1px solid rgba(243,239,232,.3);background:none;color:var(--txt-hi);font-size:20px;cursor:pointer}
+.step button:disabled{opacity:.3}
+.step output{min-width:22px;text-align:center;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:26px;color:var(--txt-hi)}
+.extras{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}
+.extras label{display:flex;align-items:center;gap:8px;border:1px solid var(--linea);padding:10px 12px;font-size:14px;cursor:pointer}
+.extras input{accent-color:var(--rojo);width:17px;height:17px}
+.campo textarea{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:12px 14px;font:inherit;font-size:16px;min-height:80px;resize:vertical}
+.campo input[type=date]{color-scheme:dark}
+.ok-box{border:1px solid rgba(243,239,232,.28);padding:22px;margin-top:8px}
+.ok-box dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:16px 0 0;font-size:15px}
+.ok-box dt{color:var(--oro2)}.ok-box dd{margin:0;color:var(--txt-hi)}
+.rsv{display:grid;grid-template-columns:minmax(0,1fr);min-height:100dvh}
+.rsv__l{position:relative;overflow:hidden;padding:22px 18px 30px;display:flex;flex-direction:column;isolation:isolate}
+.rsv__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.3;z-index:-2}
+.rsv__l::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,10,10,.55),rgba(10,10,10,.2) 40%,var(--bg) 100%)}
+.rsv__l .cab{margin-bottom:clamp(40px,9vh,90px)}
+.rsv__volver{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(243,239,232,.35);border-radius:99px;padding:11px 16px}
+.rsv__volver:hover{background:var(--txt-hi);color:var(--tinta)}
+.rsv__txt h1{font-size:clamp(62px,19vw,150px);line-height:.86;margin:18px 0 20px}
+.rsv__txt .lead{max-width:420px;color:rgba(243,239,232,.85);margin-bottom:0}
+.rsv__datos{display:none;list-style:none;margin:0;padding:0}
+.rsv__r{padding:8px 18px 64px;width:100%;max-width:560px;margin:0 auto}
+.campo label i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--rojo);color:var(--tinta);font:700 15px/1 var(--num);font-style:normal;letter-spacing:0;margin-right:10px;vertical-align:1px}
+.rsv__sep{margin-top:26px;padding-top:26px;border-top:1px solid var(--linea)}
+.turno{color:var(--muted)!important}
+.horas button{font:600 22px/1 var(--num);letter-spacing:.03em;padding:14px 0 13px}
+.step output{font:700 34px/1 var(--num)!important;min-width:30px}
+.pers b{font-size:16px}
+.ok-box{background:var(--bg2);border:0!important}
+.ok-box dt{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding-top:3px}
+@media (min-width:980px){
+  .rsv{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+  .rsv__l{position:sticky;top:0;height:100dvh;padding:28px clamp(28px,4vw,64px) 40px;justify-content:space-between}
+  .rsv__bg{opacity:.42}
+  .rsv__l::after{background:linear-gradient(90deg,rgba(10,10,10,.5),rgba(10,10,10,.75)),linear-gradient(0deg,var(--bg) 0%,rgba(10,10,10,0) 55%)}
+  .rsv__txt h1{font-size:clamp(90px,min(10.5vw,19vh),190px)}
+  .rsv__datos{display:grid;grid-template-columns:repeat(3,auto);justify-content:space-between;gap:20px;margin-top:clamp(24px,5vh,56px);padding-top:22px;border-top:1px solid var(--linea)}
+  .rsv__datos li{display:grid;gap:6px}
+  .rsv__datos small{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .rsv__datos b{font:700 26px/1 var(--num);letter-spacing:.02em;color:var(--txt-hi)}
+  .rsv__datos b a{text-decoration:none}
+  .rsv__datos span{font-size:13px;color:var(--muted)}
+  .rsv__r{padding:clamp(40px,7vh,84px) clamp(28px,4vw,64px) 90px;max-width:640px}
+}
+</style>
+<script src="/estadisticas.js" defer></script>
+</head>
+<body>
+<main class="rsv">
+  <aside class="rsv__l">
+    <img class="rsv__bg" src="../assets/local/helechos.jpg" alt="">
+    <header class="cab"><a href="../"><img src="../assets/logo.png" alt="花木"><span>HANAKI</span></a><a class="rsv__volver" href="../">← Inicio</a></header>
+    <div class="rsv__txt">
+      <div class="etq">Reservas</div>
+      <h1>Reserva<br>tu mesa<em>.</em></h1>
+      <p class="lead">Buffet libre japonés en el centro de Salou. Te confirmamos la reserva por email.</p>
+      <ul class="rsv__datos">
+        <li><small>Horario</small><b>12:30–16:30 · 19:30–23:30</b><span>Martes a domingo · lunes cerrado</span></li>
+        <li><small>Dónde</small><b>Carrer Major, 6</b><span>Centro · Salou</span></li>
+        <li><small>Teléfono</small><b><a href="tel:+34613261135">613 261 135</a></b><span>Grupos de más de 20</span></li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="rsv__r">
+  <section id="form-wrap">
+
+    <form id="f" novalidate>
+      <div id="err" class="err" role="alert" hidden></div>
+
+      <div class="campo"><label for="fecha"><i>1</i>DÍA</label><input id="fecha" type="date" required></div>
+
+      <div class="campo" style="margin-bottom:8px"><label><i>2</i>HORA</label>
+        <div class="turno">MEDIODÍA</div><div class="horas" id="h-mediodia"></div>
+        <div class="turno">NOCHE</div><div class="horas" id="h-noche"></div>
+      </div>
+
+      <div class="campo" style="margin-top:14px"><label><i>3</i>PERSONAS</label>
+        <div class="pers"><div><b>Adultos</b><small>9 años o más</small></div><div class="step"><button type="button" data-p="adultos" data-d="-1" aria-label="Menos adultos">−</button><output id="o-adultos">2</output><button type="button" data-p="adultos" data-d="1" aria-label="Más adultos">+</button></div></div>
+        <div class="pers"><div><b>Niños</b><small>De 3 a 8 años</small></div><div class="step"><button type="button" data-p="ninos" data-d="-1" aria-label="Menos niños">−</button><output id="o-ninos">0</output><button type="button" data-p="ninos" data-d="1" aria-label="Más niños">+</button></div></div>
+        <div class="pers"><div><b>Bebés</b><small>Menores de 3 años</small></div><div class="step"><button type="button" data-p="bebes" data-d="-1" aria-label="Menos bebés">−</button><output id="o-bebes">0</output><button type="button" data-p="bebes" data-d="1" aria-label="Más bebés">+</button></div></div>
+      </div>
+
+      <div class="extras">
+        <label><input type="checkbox" name="cumple">Cumpleaños</label>
+        <label><input type="checkbox" name="trona">Necesito trona</label>
+        <label><input type="checkbox" name="carrito">Carrito de bebé</label>
+      </div>
+
+      <div class="campo rsv__sep"><label for="nombre"><i>4</i>TUS DATOS · NOMBRE</label><input id="nombre" name="nombre" autocomplete="name" required maxlength="60"></div>
+      <div class="campo"><label for="telefono">TELÉFONO</label><input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" required placeholder="600 000 000"></div>
+      <div class="campo"><label for="email">EMAIL <span style="font-weight:400;letter-spacing:0;color:var(--muted)">(para recibir la confirmación)</span></label><input id="email" name="email" type="email" inputmode="email" autocomplete="email"></div>
+      <div class="campo"><label for="comentarios">COMENTARIOS <span style="font-weight:400;letter-spacing:0;color:var(--muted)">(opcional)</span></label><textarea id="comentarios" name="comentarios" maxlength="400" placeholder="Alergias, preferencias de mesa…"></textarea></div>
+      <input class="trampa" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="check"><input type="checkbox" name="privacidad" required><span>He leído y acepto la <a href="/legal#privacidad" target="_blank">política de privacidad</a>.</span></label>
+      <button class="btn" type="submit" id="enviar">RESERVAR <span aria-hidden="true">→</span></button>
+      <p class="nota" style="margin-top:14px">Grupos de más de 20 personas: llámanos al <a href="tel:+34613261135">613 261 135</a>.</p>
+    </form>
+  </section>
+
+  <section id="hecho" hidden>
+    <div class="etq">¡Reserva enviada!</div>
+    <h1>Gracias, <em id="h-nombre"></em></h1>
+    <p class="lead" id="h-texto"></p>
+    <div class="ok-box"><dl><dt>Día</dt><dd id="h-dia"></dd><dt>Hora</dt><dd id="h-hora"></dd><dt>Personas</dt><dd id="h-pers"></dd></dl></div>
+    <a class="btn sec" id="h-mia" href="#" style="margin-top:18px" hidden>CAMBIAR O CANCELAR MI RESERVA</a>
+    <p class="nota" id="h-cambiar" style="margin-top:14px">¿Necesitas cambiar algo? Llámanos al <a href="tel:+34613261135">613 261 135</a>.</p>
+    <a class="btn oro" id="h-tarjeta" href="/fidelidad/tarjeta.html" style="margin-top:20px" hidden>VER MI TARJETA Y MIS RESERVAS</a>
+    <div id="h-socio" hidden style="margin-top:22px;border:1px solid var(--linea);background:var(--bg2);padding:16px;font-size:14px;line-height:1.6">
+      <b style="color:var(--txt-hi)">Crea tu tarjeta Hanaki</b><br>Suma 1.000 puntos por cada 10 € y canjéalos por menús y buffets. Además tendrás tus reservas siempre a mano en el móvil.
+      <a class="btn" href="/fidelidad/" style="margin-top:12px">CREAR MI TARJETA</a>
+    </div>
+    <a class="btn sec" href="../" style="margin-top:12px">VOLVER A LA WEB</a>
+  </section>
+  </div>
+</main>
+<script>
+(function(){
+  var HORAS = { mediodia: ['12:30','12:45','13:00','13:15','13:30','13:45','14:00','14:15','14:30','14:45','15:00','15:15','15:30','15:45','16:00','16:15'], noche: ['19:30','19:45','20:00','20:15','20:30','20:45','21:00','21:15','21:30','21:45','22:00','22:15','22:30','22:45','23:00','23:15'] };
+  var DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'], MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var st = { hora: null, adultos: 2, ninos: 0, bebes: 0 };
+  var $ = function(id){ return document.getElementById(id); };
+  var f = $('f'), fecha = $('fecha');
+
+  function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  var hoy = new Date(), max = new Date(); max.setDate(max.getDate() + 60);
+  fecha.min = ymd(hoy); fecha.max = ymd(max); fecha.value = ymd(hoy);
+
+  // Horas cerradas desde el panel (se piden al cambiar de día)
+  var cerradas = {}, cargando = {};
+  function pedirCerradas(fe){
+    if (cerradas[fe] || cargando[fe]) return;
+    cargando[fe] = true;
+    fetch('/api/reservas/horas?fecha=' + fe, { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ cerradas[fe] = (j && j.cerradas) || []; }).catch(function(){ cerradas[fe] = []; })
+      .then(function(){ cargando[fe] = false; if (fecha.value === fe) pintarHoras(); });
+  }
+  function pintarHoras(){
+    var esHoy = fecha.value === ymd(new Date());
+    var ahora = String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
+    var cer = cerradas[fecha.value] || []; pedirCerradas(fecha.value);
+    ['mediodia','noche'].forEach(function(t){
+      var libres = 0;
+      $('h-' + t).innerHTML = HORAS[t].map(function(h){
+        var no = (esHoy && h <= ahora) || cer.indexOf(h) >= 0;
+        if (no && st.hora === h) st.hora = null;
+        if (!no) libres++;
+        return '<button type="button" data-h="' + h + '" aria-pressed="' + (st.hora === h) + '"' + (no ? ' disabled' : '') + '>' + h + '</button>';
+      }).join('');
+      if (!libres && cerradas[fecha.value]) $('h-' + t).innerHTML = '<p class="sinhoras">No quedan horas para reservar en este turno. Llámanos al <a href="tel:+34613261135">613 261 135</a>.</p>';
+    });
+  }
+  pintarHoras();
+  fecha.addEventListener('change', pintarHoras);
+  document.querySelector('.campo').parentNode.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-h]'); if (!b || b.disabled) return;
+    st.hora = b.dataset.h; pintarHoras();
+  });
+
+  function pintarPers(){
+    ['adultos','ninos','bebes'].forEach(function(k){ $('o-' + k).textContent = st[k]; });
+    document.querySelectorAll('button[data-p]').forEach(function(b){
+      var k = b.dataset.p, d = +b.dataset.d, v = st[k] + d, total = st.adultos + st.ninos + st.bebes + d;
+      b.disabled = v < 0 || (d > 0 && total > 20);
+    });
+  }
+  pintarPers();
+  document.querySelectorAll('button[data-p]').forEach(function(b){ b.addEventListener('click', function(){ st[b.dataset.p] += +b.dataset.d; pintarPers(); }); });
+
+  var err = $('err'), btn = $('enviar');
+  function fallo(m){ err.textContent = m; err.hidden = false; err.scrollIntoView({ block:'center', behavior:'smooth' }); }
+  function largo(fe){ var p = fe.split('-').map(Number), d = new Date(p[0], p[1]-1, p[2]); return DIAS[d.getDay()] + ' ' + p[2] + ' de ' + MESES[p[1]-1]; }
+  function pers(){ var a = [st.adultos + ' adulto' + (st.adultos === 1 ? '' : 's')]; if (st.ninos) a.push(st.ninos + ' niño' + (st.ninos === 1 ? '' : 's')); if (st.bebes) a.push(st.bebes + ' bebé' + (st.bebes === 1 ? '' : 's')); return a.join(', '); }
+
+  var FID_ABIERTA = true; // poner a true cuando la tarjeta de puntos sea pública
+  // Si tiene la tarjeta Hanaki en este móvil: rellena sus datos y la reserva aparecerá en su tarjeta
+  var tok = null; try { tok = localStorage.getItem('hk-fid-token'); } catch (e) {}
+  if (tok && /^[a-f0-9]{32}$/.test(tok)) {
+    fetch('/api/fidelidad/reservas?t=' + tok, { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if (!j) { tok = null; return; }
+      if (!f.nombre.value) f.nombre.value = j.socio.nombre || '';
+      if (!f.telefono.value) f.telefono.value = j.socio.telefono || '';
+      if (!f.email.value) f.email.value = j.socio.email || '';
+    }).catch(function(){});
+  } else tok = null;
+
+  f.addEventListener('submit', async function(e){
+    e.preventDefault(); err.hidden = true;
+    if (!fecha.value) return fallo('Elige un día.');
+    if (!st.hora) return fallo('Elige una hora.');
+    if (st.adultos + st.ninos < 1) return fallo('Indica cuántas personas venís.');
+    if (!f.nombre.value.trim()) return fallo('Escribe tu nombre.');
+    if (!f.telefono.value.trim()) return fallo('Escribe tu teléfono.');
+    if (!f.privacidad.checked) return fallo('Tienes que aceptar la política de privacidad.');
+    var d = { fecha: fecha.value, hora: st.hora, adultos: st.adultos, ninos: st.ninos, bebes: st.bebes,
+      nombre: f.nombre.value, telefono: f.telefono.value, email: f.email.value, comentarios: f.comentarios.value,
+      cumple: f.cumple.checked, trona: f.trona.checked, carrito: f.carrito.checked, privacidad: true, web: f.web.value };
+    btn.disabled = true; btn.textContent = 'ENVIANDO…';
+    try {
+      var r = await fetch('/api/reservas/crear', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(d) });
+      var j = await r.json().catch(function(){ return {}; });
+      if (!r.ok) throw new Error(j.error || 'No se pudo enviar la reserva. Llámanos al 613 261 135.');
+      $('h-nombre').textContent = d.nombre.trim().split(' ')[0];
+      $('h-texto').textContent = d.email.trim() ? 'Hemos recibido tu reserva. Te enviaremos la confirmación a ' + d.email.trim() + '.' : 'Hemos recibido tu reserva. El restaurante la revisará en breve.';
+      if (j.reserva && j.reserva.token) {
+        $('h-mia').href = '/reservas/mi-reserva?t=' + j.reserva.token; $('h-mia').hidden = false;
+        $('h-cambiar').textContent = 'Desde ese botón puedes cambiarla o cancelarla hasta 2 horas antes.' + (d.email.trim() ? ' También te llega en el email.' : ' Guarda el enlace: no has puesto email.');
+      }
+      $('h-dia').textContent = largo(d.fecha); $('h-hora').textContent = d.hora; $('h-pers').textContent = pers();
+      // Tarjeta de puntos: no se anuncia mientras siga privada (functions/_privado.js → FIDELIDAD_PRIVADA)
+      if (FID_ABIERTA) { if (tok) { $('h-tarjeta').href = '/fidelidad/tarjeta.html?t=' + tok; $('h-tarjeta').hidden = false; } else $('h-socio').hidden = false; }
+      if (window.HK_STATS) HK_STATS.evento('reserva');
+      $('form-wrap').hidden = true; $('hecho').hidden = false; scrollTo(0, 0);
+    } catch (ex) { fallo(ex.message); delete cerradas[fecha.value]; pintarHoras(); btn.disabled = false; btn.innerHTML = 'RESERVAR <span aria-hidden="true">→</span>'; }
+  });
+})();
+</script>
+</body>
+</html>

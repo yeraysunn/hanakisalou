@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hanaki Salou · Buffet libre japonés en el centro de Salou</title>
+<meta name="description" content="Buffet libre japonés en Carrer Major, 6, en el centro de Salou. Más de 160 platos hechos al momento. Reserva tu mesa: 613 261 135.">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://hanakisalou.com/">
+<meta property="og:type" content="restaurant">
+<meta property="og:site_name" content="Hanaki Salou">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Hanaki Salou · Buffet libre japonés en el centro de Salou">
+<meta property="og:description" content="Buffet libre japonés en Carrer Major, 6, en el centro de Salou. Reserva tu mesa: 613 261 135.">
+<meta property="og:url" content="https://hanakisalou.com/">
+<meta property="og:image" content="https://hanakisalou.com/assets/fachada.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","@id":"https://hanakisalou.com/#restaurante","name":"Hanaki Salou","alternateName":"花木 Hanaki · Buffet libre japonés","url":"https://hanakisalou.com/","description":"Restaurante japonés con buffet libre en el centro de Salou: más de 160 platos de sushi, wok, ramen y plancha pedidos desde la tablet.","image":["https://hanakisalou.com/assets/fachada.jpg","https://hanakisalou.com/assets/sala.jpg"],"logo":"https://hanakisalou.com/assets/hanaki-logo.png","telephone":"+34 613 26 11 35","address":{"@type":"PostalAddress","streetAddress":"Carrer Major, 6","addressLocality":"Salou","addressRegion":"Tarragona","postalCode":"43840","addressCountry":"ES"},"hasMap":"https://www.google.com/maps/search/?api=1&query=Hanaki+Restaurant+Japon%C3%A9s+Carrer+Major+6+Salou","servesCuisine":["Japonesa","Sushi","Buffet libre"],"priceRange":"€€","paymentAccepted":"Efectivo, Visa, Mastercard","currenciesAccepted":"EUR","acceptsReservations":"https://hanakisalou.com/reservas/","hasMenu":"https://hanakisalou.com/carta","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"12:30","closes":"16:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"19:30","closes":"23:30"}],"makesOffer":[{"@type":"Offer","name":"Buffet mediodía (martes a viernes) · adulto","price":"16.95","priceCurrency":"EUR"},{"@type":"Offer","name":"Buffet noches, fines de semana y festivos · adulto","price":"22.95","priceCurrency":"EUR"}],"potentialAction":{"@type":"ReserveAction","target":{"@type":"EntryPoint","urlTemplate":"https://hanakisalou.com/reservas/","inLanguage":"es","actionPlatform":["http://schema.org/DesktopWebPlatform","http://schema.org/MobileWebPlatform"]},"result":{"@type":"FoodEstablishmentReservation","name":"Reserva de mesa"}},"sameAs":["https://www.instagram.com/hanakisalou/","https://www.tiktok.com/@hanaki.sushi","https://www.facebook.com/hanakisalou/"]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Saira+Extra+Condensed:wght@500;600;700&display=swap">
+<link rel="icon" type="image/png" href="/assets/logo.png"><link rel="apple-touch-icon" href="/assets/logo.png">
+<link rel="preload" as="image" href="assets/hero-poster.jpg">
+<link rel="stylesheet" href="estilo.css">
+<script src="/site.js"></script>
+<script src="/estadisticas.js" defer></script>
+</head>
+<body class="is-loading">
+
+<!-- Iconos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 2l3 7 7.5.6-5.7 4.9 1.8 7.3L12 17.8 5.4 21.8l1.8-7.3L1.5 9.6 9 9z" fill="currentColor"/></symbol>
+</svg>
+
+<!-- Intro -->
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro__in">
+    <img class="intro__logo" src="assets/logo.png" alt="" width="820" height="432">
+    <div class="intro__word"><span>H</span><span>A</span><span>N</span><span>A</span><span>K</span><span>I</span></div>
+  </div>
+  <div class="intro__foot"><span>Buffet libre japonés · Salou</span><span class="intro__n" id="introN">000</span></div>
+</div>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+
+<!-- Cabecera -->
+<header class="hdr" id="hdr">
+  <a class="brand" href="#top" aria-label="Hanaki Salou, inicio">
+    <img class="brand__logo" src="assets/logo.png" alt="花木" width="820" height="432">
+    <span class="brand__w">HANAKI</span>
+  </a>
+  <nav class="nav" aria-label="Principal">
+    <a href="#hero">Inicio</a>
+    <a href="#precios">Precios</a>
+    <a href="#galeria">Galería</a>
+    <a href="#reservar">Reservas</a>
+    <a href="/ubicacion">Ubicación</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+  <div class="hdr__r">
+    <div class="langs" aria-label="Idioma"><button class="on">ES</button><button>CA</button><button>EN</button><button>FR</button></div>
+    <a class="btn btn--ghost btn--sm" href="/carta"><span>Carta</span></a>
+    <a class="btn btn--red btn--sm" href="#reservar" data-magnet><span>Reservar</span><svg><use href="#arrow"/></svg></a>
+    <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false"><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- Menú móvil -->
+<div class="menu" id="menu" aria-hidden="true">
+  <nav class="menu__nav">
+    <a href="#hero"><em>01</em>Inicio</a>
+    <a href="#precios"><em>02</em>Precios</a>
+    <a href="/carta"><em>03</em>La carta</a>
+    <a href="#galeria"><em>04</em>Galería</a>
+    <a href="#reservar"><em>05</em>Reservas</a>
+    <a href="/ubicacion"><em>06</em>Ubicación</a>
+    <a href="#contacto"><em>07</em>Contacto</a>
+  </nav>
+  <div class="menu__foot">
+    <a href="tel:+34613261135" class="menu__tel">613 261 135</a>
+    <p>Carrer Major, 6 · Salou<br>Martes a domingo · 12:30–16:30 · 19:30–23:30</p>
+    <div class="langs"><button class="on">ES</button><button>CA</button><button>EN</button><button>FR</button></div>
+  </div>
+</div>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero__media" data-plx="0.18">
+    <img src="assets/hero-poster.jpg" alt="Nigiri de salmón flambeado en Hanaki Salou">
+    <video src="assets/hero.mp4" data-src-movil="assets/hero-movil.mp4" poster="assets/hero-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+  </div>
+  <div class="hero__shade"></div>
+
+  <div class="hero__in wrap">
+    <p class="eyebrow hero__eye" data-in><i></i>Buffet libre japonés · Salou</p>
+    <h1 class="hero__t" data-fit aria-label="Sushi sin límites.">
+      <span class="ln"><span>SUSHI</span></span>
+      <span class="ln ln--b"><span>SIN</span></span>
+      <span class="ln"><span>LÍMITES<b>.</b></span></span>
+    </h1>
+    <div class="hero__row">
+      <p class="hero__p" data-in>Más de 160 platos a la carta, hechos al momento. Pide todo lo que quieras, las veces que quieras.</p>
+      <div class="hero__cta" data-in>
+        <a class="btn btn--red" href="#reservar" data-magnet><span>Reservar mesa</span><svg><use href="#arrow"/></svg></a>
+        <a class="btn btn--ghost" href="#carta"><span>Ver la carta</span><svg><use href="#arrow"/></svg></a>
+      </div>
+    </div>
+    <template id="fid-privado"><!-- Tarjeta de puntos: privada hasta que el equipo la active -->
+    <aside class="fid" id="fidelidad" data-in aria-label="Tarjeta de puntos">
+      <div class="fid__top">
+        <div>
+          <p class="fid__k">Tarjeta de puntos</p>
+          <h2 class="fid__t">Cada 10 € sumas <b>1.000 puntos</b></h2>
+          <p class="fid__s">Canjéalos por comidas gratis <b>y más regalos</b>.</p>
+        </div>
+        <span class="fid__n" id="fidN">0</span>
+      </div>
+      <div class="ruta" id="ruta">
+        <div class="ruta__l" aria-hidden="true"><i></i><img src="assets/sello.png" alt="" width="64" height="64"></div>
+        <ol class="ruta__h" id="rutaH">
+          <li style="--x:73.3%"><b>22.000</b><span>Buffet de mediodía</span></li>
+          <li style="--x:100%"><b>30.000</b><span>Buffet con platos especiales</span></li>
+        </ol>
+      </div>
+      <div class="fid__cta">
+        <a class="btn btn--cream btn--sm" href="/fidelidad/"><span>Crear mi tarjeta</span><svg><use href="#arrow"/></svg></a>
+        <a class="link" href="/fidelidad/?ver=1">Ver mi tarjeta <svg><use href="#arrow"/></svg></a>
+      </div>
+    </aside>
+    </template>
+  </div>
+
+  <ul class="hero__facts wrap" data-in>
+    <li><span class="status" data-status><i></i><b>Abrimos a las 12:30</b></span><small data-status-sub>Martes a domingo</small></li>
+    <li><b>Carrer Major, 6</b><small>Centro · 43840 Salou</small></li>
+    <li><b>+160 platos</b><small>Hechos al momento</small></li>
+    <li class="hero__scroll"><b>Desliza</b><i></i></li>
+  </ul>
+</section>
+
+<!-- CINTA -->
+<div class="tape" aria-hidden="true">
+  <div class="tape__track" data-marquee="1">
+    <span>Una ronda más</span><i></i><span>Pide</span><i></i><span>Come</span><i></i><span>Repite</span><i></i>
+  </div>
+</div>
+
+<!-- LA IDEA -->
+<section class="idea sec sec--cream" id="idea">
+  <div class="wrap">
+    <p class="eyebrow" data-in><i></i>01 — La idea</p>
+    <h2 class="idea__t" data-words>Más de 160 platos hechos al momento. Pides desde la tablet, te lo trae el robot y, cuando se acaba, pides <mark>una ronda más.</mark></h2>
+
+    <ul class="perks">
+      <li data-in><em>01</em><h3>Sin límites</h3><p>Pide las veces que quieras.</p></li>
+      <li data-in><em>02</em><h3>Pides desde la tablet</h3><p>Cuando quieras, lo que quieras.</p></li>
+      <li data-in><em>03</em><h3>Cocina al momento</h3><p>Cada plato, recién hecho.</p></li>
+      <li data-in><em>04</em><h3>Opciones veggie</h3><p>Para todos en la mesa.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- PRECIOS -->
+<section class="price sec sec--cream" id="precios">
+  <div class="wrap">
+    <div class="price__head">
+      <div>
+        <p class="eyebrow" data-in><i></i>02 — Precios</p>
+        <h2 class="h2" data-rise>Un precio.<br>Come <span class="red">sin límites.</span></h2>
+      </div>
+      <div class="switch" id="switch" role="tablist" data-in>
+        <i class="switch__pill"></i>
+        <button role="tab" class="on" data-turno="mid" aria-selected="true">Mediodía<small>Martes a viernes</small></button>
+        <button role="tab" data-turno="night" aria-selected="false">Noche y findes<small>y festivos</small></button>
+      </div>
+    </div>
+
+    <div class="price__grid">
+      <article class="pc pc--main" data-in>
+        <header><h3>Adultos</h3><span class="tag">El más elegido</span></header>
+        <div class="pc__num"><span class="roll" data-roll data-mid="16,95" data-night="22,95">16,95</span><sup>€</sup></div>
+        <footer><span>Precio por persona</span><span>IVA incluido</span></footer>
+      </article>
+      <article class="pc" data-in>
+        <header><h3>Niños</h3><span class="sub">De 3 a 8 años</span></header>
+        <div class="pc__num"><span class="roll" data-roll data-mid="11,95" data-night="13,95">11,95</span><sup>€</sup></div>
+        <footer><span>IVA incluido</span></footer>
+      </article>
+      <article class="pc" data-in>
+        <header><h3>Bebés</h3><span class="sub">Menores de 3 años</span></header>
+        <div class="pc__num pc__num--t">Gratis</div>
+        <footer><span>Todos los turnos</span></footer>
+      </article>
+    </div>
+    <p class="price__note" data-in>Bebidas y postres no incluidos. Noche, fines de semana y festivos: con platos especiales.</p>
+
+    <article class="daily" data-in>
+      <div class="daily__l">
+        <p class="eyebrow eyebrow--red"><i></i>Salou y alrededores</p>
+        <h3 class="h3">A domicilio y para llevar</h3>
+        <p>¿Prefieres comer en casa? Llámanos, haz tu pedido y te lo llevamos o lo recoges en el local.</p>
+      </div>
+      <ol class="daily__steps">
+        <li><em>1</em>Llamas al 613 261 135</li>
+        <li><em>2</em>Eliges tus platos de la carta</li>
+        <li><em>3</em>Te lo llevamos o lo recoges</li>
+      </ol>
+      <div class="daily__r">
+        <a class="btn btn--red" href="tel:+34613261135"><span>Llamar</span><svg><use href="#arrow"/></svg></a>
+      </div>
+      <small class="daily__legal">Zona de reparto en Salou y alrededores. El tiempo de entrega es aproximado.</small>
+    </article>
+
+    <div class="rules">
+      <h3 class="eyebrow" data-in><i></i>Normas de la casa</h3>
+      <ul>
+        <li data-in><em>01</em>Precio por persona. Bebidas y postres aparte.</li>
+        <li data-in><em>02</em>Mediodía: de martes a viernes, excepto festivos. Lunes cerrado.</li>
+        <li data-in><em>03</em>Pide con cabeza: la comida que sobra se cobra aparte.</li>
+        <li data-in><em>04</em>Toda la mesa comparte la misma modalidad de buffet.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="how" id="como">
+  <div class="wrap how__grid">
+    <div class="how__txt">
+      <p class="eyebrow" data-in><i></i>03 — Cómo funciona</p>
+      <h2 class="h2" data-rise>Pide, disfruta,<br><span class="red">repite.</span></h2>
+      <ol class="how__list" data-in>
+        <li class="on" data-how="0" style="--d:4s"><button type="button"><em>01</em><span><b>Pides desde la tablet</b><small>Te sentamos y pides todo lo que quieras, cuando quieras.</small></span></button><i class="how__bar"><i></i></i></li>
+        <li data-how="1" style="--d:5s"><button type="button"><em>02</em><span><b>El robot te lo trae</b><small>Sale de cocina recién hecho y llega a tu mesa sobre ruedas.</small></span></button><i class="how__bar"><i></i></i></li>
+        <li data-how="2" style="--d:5s"><button type="button"><em>03</em><span><b>Coges tu plato</b><small>Lo recoges de la bandeja del gato y pides una ronda más.</small></span></button><i class="how__bar"><i></i></i></li>
+      </ol>
+    </div>
+    <div class="how__media" data-in>
+      <div class="how__frame">
+        <figure class="on" data-how-m="0"><img src="assets/tablet.jpg" alt="Tablet de pedidos en la mesa" loading="lazy"></figure>
+        <figure data-how-m="1"><video src="assets/como/robot-1.mp4" poster="assets/como-robot-1.jpg" muted loop playsinline preload="none" aria-label="El robot camarero llega a la mesa con los platos"></video></figure>
+        <figure data-how-m="2"><video src="assets/como/robot-2.mp4" poster="assets/como-robot-2.jpg" muted loop playsinline preload="none" aria-label="El robot llega a la mesa y el cliente coge su plato"></video></figure>
+        <div class="how__count"><b id="howN">01</b><span>/ 03</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LA CARTA -->
+<section class="menu-s" id="carta">
+  <div class="menu-s__pin">
+    <div class="wrap menu-s__head">
+      <div>
+        <p class="eyebrow" data-in><i></i>04 — La carta</p>
+        <h2 class="h2" data-rise>160 platos.<br><span class="out">Una mesa.</span></h2>
+      </div>
+      <div class="menu-s__side" data-in>
+        <ul class="cats">
+          <li><a href="/carta">Entrantes<sup>15</sup></a></li>
+          <li><a href="/carta">Arroz y pasta<sup>16</sup></a></li>
+          <li><a href="/carta">Fritos<sup>15</sup></a></li>
+          <li><a href="/carta">Plancha<sup>8</sup></a></li>
+          <li><a href="/carta">Salteados<sup>8</sup></a></li>
+          <li><a href="/carta">Sushi<sup>52</sup></a></li>
+          <li><a href="/carta">Especiales<sup>43</sup></a></li>
+          <li><a href="/carta#bebidas">Bebidas</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rail" id="rail" data-cursor="Arrastra">
+      <div class="rail__track" id="railTrack">
+        <article class="dish"><div class="dish__img"><img src="assets/platos/ramen-de-ternera.jpg" alt="Ramen de ternera" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 2</span><h3>Ramen de ternera</h3><p>Arroz y pasta</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/76.jpg" alt="Nigiri de salmón flambeado" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 76</span><h3>Nigiri de salmón flambeado</h3><p>Sushi · 2 uds.</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/gyoza-de-pollo.jpg" alt="Gyoza de pollo" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 7</span><h3>Gyoza de pollo</h3><p>Entrantes · 4 uds.</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/tempura-de-langostino.jpg" alt="Tempura de langostino" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 21</span><h3>Tempura de langostino</h3><p>Fritos · 2 uds.</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/90.jpg" alt="Uramaki de aguacate" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 90</span><h3>Uramaki de aguacate</h3><p>Sushi · 4 uds.</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/brocheta-de-salmon.jpg" alt="Brocheta de salmón" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 36</span><h3>Brocheta de salmón</h3><p>Plancha · 2 uds.</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/yakisoba-de-verduras.jpg" alt="Yakisoba de verduras" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 30</span><h3>Yakisoba de verduras</h3><p>Arroz y pasta · Veggie</p></div></article>
+        <article class="dish"><div class="dish__img"><img src="assets/platos/takoyaki.jpg" alt="Takoyaki" loading="lazy"></div><div class="dish__b"><span class="dish__n">Nº 17</span><h3>Takoyaki</h3><p>Fritos · 3 uds.</p></div></article>
+        <a class="dish dish--cta" href="/carta" data-cursor="Abrir">
+          <img class="dish__h" src="assets/logo.png" alt="" width="820" height="432">
+          <h3>Ver la carta<br>completa</h3>
+          <span class="btn btn--ink"><span>160 platos</span><svg><use href="#arrow"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="wrap rail__foot">
+      <div class="rail__bar"><i id="railBar"></i></div>
+      <span>Todo incluido en el buffet · Alérgenos en la carta</span>
+    </div>
+  </div>
+</section>
+
+<!-- EL LOCAL -->
+<section class="place sec" id="local">
+  <div class="wrap">
+    <div class="place__head">
+      <div>
+        <p class="eyebrow" data-in><i></i>05 — El local</p>
+        <h2 class="h2" data-rise>Así se vive<br><span class="out">Hanaki.</span></h2>
+      </div>
+      <p class="place__p" data-in>Techo de helechos, bombillas cálidas y grandes ventanales en pleno centro de Salou. Carrer Major, 6.</p>
+    </div>
+    <div class="bento">
+      <figure class="b b--a" data-clip data-cursor="Mirar"><img src="assets/local/helechos.jpg" alt="La sala bajo el techo de helechos" loading="lazy" data-plx="0.08"><figcaption><em>01</em>El techo de helechos</figcaption></figure>
+      <figure class="b b--b" data-clip data-cursor="Mirar"><img src="assets/sala.jpg" alt="La sala" loading="lazy" data-plx="0.08"><figcaption><em>02</em>La sala</figcaption></figure>
+      <figure class="b b--c" data-clip data-cursor="Mirar"><img src="assets/recien-hecho.jpg" alt="Mesa con sushi y platos recién hechos" loading="lazy" data-plx="0.06"><figcaption><em>03</em>Recién hecho</figcaption></figure>
+      <figure class="b b--d" data-clip data-cursor="Mirar"><img src="assets/local/robot.jpg" alt="Nuestro robot camarero junto a la barra" loading="lazy" data-plx="0.06"><figcaption><em>04</em>Nuestro robot</figcaption></figure>
+      <figure class="b b--e" data-clip data-cursor="Mirar"><img src="assets/local/barra.jpg" alt="La barra" loading="lazy" data-plx="0.08"><figcaption><em>05</em>La barra</figcaption></figure>
+      <figure class="b b--f" data-clip data-cursor="Mirar"><img src="assets/local/ventanales.jpg" alt="La sala de los ventanales" loading="lazy" data-plx="0.06"><figcaption><em>06</em>Los ventanales</figcaption></figure>
+      <figure class="b b--g" data-clip data-cursor="Mirar"><img src="assets/local/laminas.jpg" alt="Láminas japonesas en la sala" loading="lazy" data-plx="0.06"><figcaption><em>07</em>Las láminas</figcaption></figure>
+      <figure class="b b--h" data-clip data-cursor="Mirar"><img src="assets/fachada.jpg" alt="La fachada de Hanaki en Carrer Major 6, Salou" loading="lazy" data-plx="0.1"><figcaption><em>08</em>Carrer Major, 6</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- RESEÑAS -->
+<section class="rev sec sec--cream" id="resenas">
+  <div class="wrap rev__grid">
+    <div class="rev__l">
+      <p class="eyebrow" data-in><i></i>06 — Lo que dicen</p>
+      <div class="rev__mark" aria-hidden="true">“</div>
+      <div class="rev__stage" id="revStage" aria-live="polite">
+        <blockquote class="on"><p>Sushi fresquísimo y todo sale al momento. El robot encanta a los niños: repetiremos seguro.</p><footer><b>Laura M.</b><span>Google</span></footer></blockquote>
+        <blockquote><p>Calidad de restaurante japonés a precio de buffet. El comedor es precioso de noche.</p><footer><b>Jordi P.</b><span>Google</span></footer></blockquote>
+        <blockquote><p>Celebramos un cumpleaños de doce personas y nos trataron de maravilla. Muy recomendable.</p><footer><b>Claire D.</b><span>Tripadvisor</span></footer></blockquote>
+      </div>
+      <div class="rev__ctl">
+        <div class="rev__dots" id="revDots"><button class="on" aria-label="Reseña 1"><i></i></button><button aria-label="Reseña 2"><i></i></button><button aria-label="Reseña 3"><i></i></button></div>
+        <a class="link" href="https://www.google.com/maps/search/?api=1&amp;query=Hanaki+Restaurant+Japon%C3%A9s+Carrer+Major+6+Salou" target="_blank" rel="noopener">Deja tu reseña <svg><use href="#arrow"/></svg></a>
+      </div>
+    </div>
+    <div class="rev__r">
+      <figure class="rev__ph" data-clip><img src="assets/resena.jpg" alt="Clientas disfrutando del sushi en Hanaki Salou" loading="lazy" data-plx="0.07"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVAR -->
+<section class="book" id="reservar">
+  <div class="book__bg" data-plx="0.14"><img src="assets/local/helechos.jpg" alt="" loading="lazy"></div>
+  <div class="wrap book__in">
+    <p class="eyebrow" data-in><i></i>07 — Reservas</p>
+    <h2 class="book__t" data-fit data-rise-fit aria-label="Reserva tu mesa">
+      <span class="ln"><span>RESERVA</span></span>
+      <span class="ln"><span>TU MESA<b>.</b></span></span>
+    </h2>
+    <div class="book__row">
+      <p data-in>Reserva online en un minuto y te confirmamos la mesa, o llámanos si lo prefieres. ¿Grupo grande o cumpleaños? Avísanos al llamar.</p>
+      <div class="book__acts" data-in>
+        <a class="btn btn--red btn--xl" href="/reservas/" data-magnet><span>Reservar online</span><svg><use href="#arrow"/></svg></a>
+        <a class="book__tel" href="tel:+34613261135"><small>o llámanos</small><b>613 261 135</b></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERÍA -->
+<section class="gal sec sec--cream" id="galeria">
+  <div class="wrap gal__head">
+    <div>
+      <p class="eyebrow" data-in><i></i>08 — Galería</p>
+      <h2 class="h2" data-rise>Recién salido<br>de <span class="red">cocina.</span></h2>
+    </div>
+    <a class="link" href="https://www.instagram.com/hanakisalou/" target="_blank" rel="noopener" data-in>Síguenos @hanakisalou <svg><use href="#arrow"/></svg></a>
+  </div>
+  <div class="gal__rail" data-cursor="@hanakisalou">
+    <div class="gal__track" data-marquee="flat">
+      <figure><img src="assets/gal-9880.jpg" alt="Gyoza" loading="lazy"></figure>
+      <figure><img src="assets/gal-9881.jpg" alt="Nigiri flambeado" loading="lazy"></figure>
+      <figure><video src="assets/hero-movil.mp4" poster="assets/hero-movil.jpg" muted loop playsinline autoplay preload="metadata" aria-label="Nigiri de salmón flambeado"></video></figure>
+      <figure><img src="assets/gal-9882.jpg" alt="Roll con tobiko" loading="lazy"></figure>
+      <figure><img src="assets/gal-9883.jpg" alt="Sushi roll" loading="lazy"></figure>
+      <figure><img src="assets/gal-9884.jpg" alt="Gunkan Hanaki" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- PIE -->
+<footer class="ftr" id="contacto">
+  <div class="wrap ftr__grid">
+    <div class="ftr__brand">
+      <img class="ftr__logo" src="assets/logo.png" alt="花木" width="820" height="432">
+      <p>Pequeños placeres,<br>grandes momentos.</p>
+    </div>
+    <div>
+      <h4>Horario</h4>
+      <ul class="week" id="week">
+        <li><span>Lunes</span><span>Cerrado</span></li>
+        <li><span>Martes</span><span>12:30–16:30 · 19:30–23:30</span></li>
+        <li><span>Miércoles</span><span>12:30–16:30 · 19:30–23:30</span></li>
+        <li><span>Jueves</span><span>12:30–16:30 · 19:30–23:30</span></li>
+        <li><span>Viernes</span><span>12:30–16:30 · 19:30–23:30</span></li>
+        <li><span>Sábado</span><span>12:30–16:30 · 19:30–23:30</span></li>
+        <li><span>Domingo</span><span>12:30–16:30 · 19:30–23:30</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Ubicación</h4>
+      <p>Carrer Major, 6<br>43840 Salou, Tarragona</p>
+      <a class="link" href="/ubicacion">Cómo llegar <svg><use href="#arrow"/></svg></a>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <p><a href="tel:+34613261135">613 261 135</a></p>
+      <ul class="soc">
+        <li><a href="https://www.instagram.com/hanakisalou/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.tiktok.com/@hanaki.sushi" target="_blank" rel="noopener">TikTok</a></li>
+        <li><a href="https://www.facebook.com/hanakisalou/" target="_blank" rel="noopener">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ftr__big" data-fit aria-hidden="true"><span class="ln"><span>HANAKI</span></span></div>
+  <div class="wrap ftr__legal">
+    <span>© 2026 Hanaki Salou · Restaurante japonés</span>
+    <nav><a href="/legal#aviso-legal">Aviso legal</a><a href="/legal#privacidad">Privacidad</a><a href="/legal#terminos">Términos</a><a href="/legal#cookies">Cookies</a></nav>
+  </div>
+</footer>
+
+<!-- Barra inferior móvil -->
+<div class="dock" id="dock">
+  <a href="tel:+34613261135"><span>Llamar</span></a>
+  <a class="dock__m" href="/reservas/"><span>Reservar online</span><svg><use href="#arrow"/></svg></a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /reservas/admin
+Disallow: /fidelidad/admin
+Disallow: /fidelidad/tarjeta
+
+Sitemap: https://hanakisalou.com/sitemap.xml
