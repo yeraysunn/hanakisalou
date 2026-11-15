@@ -1,5 +1,5 @@
-/reservar  /#reservar  302
-/reservar/  /#reservar  302
+/reservar  /reservas/  301
+/reservar/  /reservas/  301
 
 # Direcciones de la web anterior de Salou → URLs limpias
 /index.dc.html  /  301
@@ -7,6 +7,6 @@
 /Hanaki%20Carta.dc.html  /carta  301
 /Hanaki%20Ubicacion.dc.html  /ubicacion  301
 /Hanaki%20Legal.dc.html  /legal  301
-/Hanaki%20Reservar.dc.html  /#reservar  302
+/Hanaki%20Reservar.dc.html  /reservas/  301
 /privado-platos.dc.html  /carta  301
 /404.dc.html  /  301
