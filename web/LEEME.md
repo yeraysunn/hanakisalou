@@ -18,6 +18,10 @@ La web anterior está en Hostinger; esta necesita Cloudflare (funciones + base d
    - `ADMIN_PASSWORD` (contraseña del panel)
    - `RESEND_API_KEY` (emails) · opcional `EMAIL_FROM` = `Hanaki Salou <reservas@hanakisalou.com>`, `EMAIL_RESPUESTAS` = hanakisalou@gmail.com
    - `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` (bot propio de Hanaki Salou)
+     Las reservas pendientes llegan al grupo con botones ✅ Aceptar / ❌ Rechazar (confirman o rechazan y mandan el email al cliente).
+     Para conectar los botones, una vez (o si cambia la clave del bot): abrir `/api/telegram/setup?key=<secreto>`, donde el secreto es
+     `TELEGRAM_WEBHOOK_SECRET` si existe o, si no, los 48 primeros caracteres hex de SHA-256(`hanaki-webhook:` + clave del bot).
+     Opcional `TELEGRAM_STAFF_IDS`: IDs de Telegram del personal que pueden pulsar los botones fuera del grupo.
    - opcional `GOOGLE_RESENA_URL` (enlace «Pedir reseñas» de Google Business)
 5. Deployments → Retry deployment.
 6. Dominio: Custom domains → hanakisalou.com (mover los DNS a Cloudflare o apuntar el CNAME). Hasta entonces se prueba en la URL *.pages.dev.
