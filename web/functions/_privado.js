@@ -8,7 +8,7 @@ import { sesionValida } from './api/fidelidad/_lib.js';
 export const FIDELIDAD_PRIVADA = true;
 export const RESERVAS_PRIVADAS = true;
 
-export function cerrar(activo, rutas, { pagina = false } = {}) {
+export function cerrar(activo, rutas, { pagina = false, mensaje = 'La tarjeta de puntos todavía no está disponible.' } = {}) {
   return async (ctx) => {
     const { request, env, next } = ctx;
     if (!activo) return next();
@@ -16,6 +16,6 @@ export function cerrar(activo, rutas, { pagina = false } = {}) {
     if (!rutas.includes(p)) return next();
     if (await sesionValida(request, env).catch(() => false)) return next();
     if (pagina) return new Response(null, { status: 302, headers: { location: '/', 'cache-control': 'no-store' } });
-    return new Response(JSON.stringify({ error: 'La tarjeta de puntos todavía no está disponible.' }), { status: 403, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+    return new Response(JSON.stringify({ error: mensaje }), { status: 403, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
   };
 }

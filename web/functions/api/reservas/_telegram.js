@@ -5,8 +5,7 @@ import { fechaLarga, personasTexto } from './_comun.js';
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const LOCAL = 'Hanaki Salou';
-const TITULOS = { nueva: '🍣 <b>Nueva reserva · ' + LOCAL + '</b>', modificada: '✏️ <b>Reserva cambiada por el cliente · ' + LOCAL + '</b>', cancelada: '❌ <b>Reserva cancelada por el cliente · ' + LOCAL + '</b>' };
+const TITULOS = { nueva: '🍣 <b>Nueva reserva</b>', modificada: '✏️ <b>Reserva cambiada por el cliente</b>', cancelada: '❌ <b>Reserva cancelada por el cliente</b>' };
 
 export async function notificarTelegram(env, r, tipo = 'nueva', antes = null) {
   const token = env.TELEGRAM_BOT_TOKEN;
