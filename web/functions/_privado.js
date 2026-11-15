@@ -6,7 +6,7 @@
 import { sesionValida } from './api/fidelidad/_lib.js';
 
 export const FIDELIDAD_PRIVADA = true;
-export const RESERVAS_PRIVADAS = false;
+export const RESERVAS_PRIVADAS = true;
 
 export function cerrar(activo, rutas, { pagina = false } = {}) {
   return async (ctx) => {
