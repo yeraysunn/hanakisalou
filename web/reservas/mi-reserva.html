@@ -77,6 +77,7 @@
 .btn.peligro:hover{background:var(--rojo);color:var(--tinta)}
 .ok{background:rgba(95,179,122,.12);border:1px solid rgba(95,179,122,.4);color:#BFE5CB;border-radius:14px;padding:13px 15px;font-size:14.5px;line-height:1.5;margin-bottom:16px}
 .rsv__r h1{font-size:clamp(46px,12vw,72px)}
+.aviso-cocina{margin:12px 0 0;padding:12px 14px;border-left:3px solid var(--rojo);background:var(--bg2);font-size:14px;line-height:1.5;color:var(--txt)}.aviso-cocina b{color:var(--txt-hi);font-weight:600}
 </style>
 <script src="/estadisticas.js" defer></script>
 </head>
@@ -130,6 +131,7 @@
         <div class="campo"><label><i>2</i>HORA</label>
           <div class="turno">MEDIODÍA</div><div class="horas" id="h-mediodia"></div>
           <div class="turno">NOCHE</div><div class="horas" id="h-noche"></div>
+          <p class="aviso-cocina" id="aviso-cocina" role="status" hidden></p>
         </div>
         <div class="campo"><label><i>3</i>PERSONAS</label>
           <div class="pers"><div><b>Adultos</b><small>9 años o más</small></div><div class="step"><button type="button" data-p="adultos" data-d="-1" aria-label="Menos adultos">−</button><output id="o-adultos">2</output><button type="button" data-p="adultos" data-d="1" aria-label="Más adultos">+</button></div></div>
@@ -185,6 +187,12 @@
       .then(function(j){ cerradas[fe] = (j && j.cerradas) || []; }).catch(function(){ cerradas[fe] = []; })
       .then(function(){ cargando[fe] = false; if (fecha.value === fe) pintarHoras(); });
   }
+  // Aviso: reservas después de las 15:15 / 22:15 → la cocina cierra a las 16:00 / 23:00 (restaurante 16:30 / 23:30)
+  function avisoCocina(){
+    var h = st.hora, a = $('aviso-cocina'), m = !!h && h > '15:15' && h < '17:00', n = !!h && h > '22:15';
+    a.hidden = !(m || n);
+    if (m || n) a.innerHTML = '<b>La cocina cierra a las ' + (m ? '16:00' : '23:00') + '</b> (el restaurante, a las ' + (m ? '16:30' : '23:30') + '). Reservando a las ' + h + ' tendrás poco tiempo para pedir.';
+  }
   function pintarHoras(){
     var esHoy = fecha.value === ymd(new Date());
     var ahora = String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
@@ -200,6 +208,7 @@
       }).join('');
       if (!libres && cerradas[fecha.value]) $('h-' + tt).innerHTML = '<p class="sinhoras">No quedan horas en este turno. Llámanos al <a href="tel:+34613261135">613 261 135</a>.</p>';
     });
+    avisoCocina();
   }
   function pintarPers(){
     ['adultos','ninos','bebes'].forEach(function(k){ $('o-' + k).textContent = st[k]; });

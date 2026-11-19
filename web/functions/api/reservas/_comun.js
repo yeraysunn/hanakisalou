@@ -2,10 +2,11 @@
 import { HttpError, escapar, nuevoToken } from '../fidelidad/_lib.js';
 export { json, db, handle, body, HttpError, normalizarTelefono, sesionValida, enviarEmail, escapar, nuevoToken } from '../fidelidad/_lib.js';
 
-// Turnos (hora de llegada). Se puede reservar cada 15 minutos; turnos 12:30–16:15 y 19:30–23:15.
+// Turnos (hora de llegada). Se puede reservar cada 15 minutos; turnos 12:30–15:45 y 19:30–22:45.
+// El restaurante cierra a las 16:30 y 23:30; la cocina, media hora antes (16:00 y 23:00) para la última ronda.
 export const HORAS = {
-  mediodia: ['12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15', '14:30', '14:45', '15:00', '15:15', '15:30', '15:45', '16:00', '16:15'],
-  noche: ['19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45', '23:00', '23:15'],
+  mediodia: ['12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '14:15', '14:30', '14:45', '15:00', '15:15', '15:30', '15:45'],
+  noche: ['19:30', '19:45', '20:00', '20:15', '20:30', '20:45', '21:00', '21:15', '21:30', '21:45', '22:00', '22:15', '22:30', '22:45'],
 };
 export const TODAS_HORAS = [...HORAS.mediodia, ...HORAS.noche];
 export const MAX_PERSONAS = 20;
@@ -63,10 +64,10 @@ export async function validarDatos(DB, d, antes = null) {
   if (fecha < hoy) throw new HttpError(400, 'Ese día ya ha pasado.');
   const limite = new Date(Date.parse(hoy) + DIAS_ANTELACION * 864e5).toISOString().slice(0, 10);
   if (fecha > limite) throw new HttpError(400, `Solo se puede reservar con ${DIAS_ANTELACION} días de antelación como máximo.`);
-  if (!TODAS_HORAS.includes(hora)) throw new HttpError(400, 'Elige una hora.');
+  const misma = antes && antes.fecha === fecha && antes.hora === hora;
+  if (!TODAS_HORAS.includes(hora) && !misma) throw new HttpError(400, 'Elige una hora.');
   if (fecha === hoy && hora <= horaMadrid()) throw new HttpError(400, 'Esa hora ya ha pasado. Elige otra.');
   if (DIAS_CERRADOS.includes(new Date(fecha + 'T12:00:00Z').getUTCDay())) throw new HttpError(400, 'Los lunes estamos cerrados. Elige otro día.');
-  const misma = antes && antes.fecha === fecha && antes.hora === hora;
   if (!misma && (await horasCerradas(DB, fecha)).includes(hora)) throw new HttpError(409, 'Esa hora ya no está disponible. Elige otra o llámanos al 613 261 135.');
   if (adultos + ninos < 1) throw new HttpError(400, 'Indica cuántas personas venís.');
   if (adultos + ninos + bebes > MAX_PERSONAS) throw new HttpError(400, `Para más de ${MAX_PERSONAS} personas llámanos al 613 261 135.`);
