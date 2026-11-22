@@ -1,7 +1,7 @@
 // Carta para pedidos a domicilio / recoger (GENERADO desde glovo/catalogo-papel.tsv + carta.html, precio de la carta en papel).
 // Precios en céntimos. El servidor SIEMPRE recalcula el total con estos precios (nunca se fía del navegador).
 // Para regenerar: node glovo/gen-catalogo-pedidos.mjs glovo/catalogo-papel.tsv web/carta.html web/functions/api/pedidos/_catalogo.js
-export const CATEGORIAS = ["Entrantes","Arroz y pasta","Fritos","Plancha","Salteados","Sushi","Especiales","Bebidas"];
+export const CATEGORIAS = ["Entrantes","Arroz y pasta","Fritos","Plancha","Salteados","Sushi","Especiales","Bebidas","Cervezas, sake y vino"];
 export const CATALOGO = [
   {"id":"p1","num":"1","cat":"Entrantes","nombre":"Sopa de miso","desc":"","precio":400,"al":"G S V","foto":"1"},
   {"id":"p24A","num":"24A","cat":"Entrantes","nombre":"Yakisoba en caldo","desc":"","precio":400,"al":"G S Se","foto":"24A"},
@@ -137,6 +137,7 @@ export const CATALOGO = [
   {"id":"p147","num":"147","cat":"Especiales","nombre":"Tartar de salmón y mango","desc":"","precio":500,"al":"G P S L Se","foto":"147"},
   {"id":"p148","num":"148","cat":"Especiales","nombre":"Tartar de arroz y salmón","desc":"","precio":500,"al":"G P S L Se","foto":"148"},
   {"id":"p143","num":"143","cat":"Especiales","nombre":"Cookie de salmón","desc":"Mango, philadelphia y salsa de maracuyá","precio":450,"al":"G P L","foto":"143"},
+  {"id":"a-cervezas-especiales-cerveza-sin-alcohol","cat":"Bebidas","nombre":"Cerveza Sin Alcohol","desc":"","precio":315,"al":"G","bebida":""},
   {"id":"b-refrescos-agua","cat":"Bebidas","nombre":"Agua","desc":"","precio":265,"al":"","bebida":"agua"},
   {"id":"b-refrescos-agua-con-gas","cat":"Bebidas","nombre":"Agua con gas","desc":"","precio":280,"al":"","bebida":"vichy"},
   {"id":"b-refrescos-coca-cola","cat":"Bebidas","nombre":"Coca-Cola","desc":"","precio":300,"al":"","bebida":"cocacola"},
@@ -163,5 +164,23 @@ export const CATALOGO = [
   {"id":"b-ramune-sandia","cat":"Bebidas","nombre":"Ramune sandía","desc":"","precio":395,"al":"","bebida":"ram_fresa"},
   {"id":"b-ramune-naranja","cat":"Bebidas","nombre":"Ramune naranja","desc":"","precio":395,"al":"","bebida":"ram_naranja"},
   {"id":"b-ramune-lychee","cat":"Bebidas","nombre":"Ramune lychee","desc":"","precio":395,"al":"","bebida":"ram_lychee"},
+  {"id":"a-cervezas-especiales-cerveza-japonesa","cat":"Cervezas, sake y vino","nombre":"Cerveza Japonesa","desc":"+18","precio":350,"al":"G","bebida":"","alcohol":1},
+  {"id":"a-cervezas-especiales-cerveza-doble-malta","cat":"Cervezas, sake y vino","nombre":"Cerveza Doble Malta","desc":"+18","precio":315,"al":"G","bebida":"","alcohol":1},
+  {"id":"a-sake-botella-de-sake-300-ml","cat":"Cervezas, sake y vino","nombre":"Botella de Sake 300 ml","desc":"+18","precio":1395,"al":"","bebida":"","alcohol":1},
+  {"id":"a-sake-botella-de-sake-720-ml","cat":"Cervezas, sake y vino","nombre":"Botella de Sake 720 ml","desc":"+18","precio":3800,"al":"","bebida":"","alcohol":1},
+  {"id":"a-vinos-blancos-poesia-blanco","cat":"Cervezas, sake y vino","nombre":"Vino blanco Poesia (botella)","desc":"+18","precio":1400,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-blancos-verdejo","cat":"Cervezas, sake y vino","nombre":"Vino blanco Verdejo (botella)","desc":"+18","precio":1550,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-blancos-blanc-pescador","cat":"Cervezas, sake y vino","nombre":"Vino blanco Blanc Pescador (botella)","desc":"+18","precio":2190,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-blancos-albarino-lagar-do-frade","cat":"Cervezas, sake y vino","nombre":"Vino blanco Albariño Lagar do Frade (botella)","desc":"+18","precio":3390,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-rosados-poesia-rosado","cat":"Cervezas, sake y vino","nombre":"Vino rosado Poesia (botella)","desc":"+18","precio":1400,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-rosados-lambrusco","cat":"Cervezas, sake y vino","nombre":"Vino rosado Lambrusco (botella)","desc":"+18","precio":1590,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-rosados-cresta-rosa","cat":"Cervezas, sake y vino","nombre":"Vino rosado Cresta Rosa (botella)","desc":"+18","precio":1850,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-rosados-gran-feudo","cat":"Cervezas, sake y vino","nombre":"Vino rosado Gran Feudo (botella)","desc":"+18","precio":2290,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-tintos-poesia-tinto","cat":"Cervezas, sake y vino","nombre":"Vino tinto Poesia (botella)","desc":"+18","precio":1400,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-tintos-don-barbe-negre","cat":"Cervezas, sake y vino","nombre":"Vino tinto Don Barbe Negre (botella)","desc":"+18","precio":1590,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-tintos-abid-negre","cat":"Cervezas, sake y vino","nombre":"Vino tinto Abid Negre (botella)","desc":"+18","precio":1990,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-vinos-tintos-vega-nazcan-roble","cat":"Cervezas, sake y vino","nombre":"Vino tinto Vega Nazcan Roble (botella)","desc":"+18","precio":3090,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-cava-rigol","cat":"Cervezas, sake y vino","nombre":"Cava Rigol (botella)","desc":"+18","precio":1800,"al":"Su","bebida":"","alcohol":1},
+  {"id":"a-cava-sant-manel-brut-nature","cat":"Cervezas, sake y vino","nombre":"Cava Sant Manel Brut Nature (botella)","desc":"+18","precio":2200,"al":"Su","bebida":"","alcohol":1},
 ];
 export const POR_ID = Object.fromEntries(CATALOGO.map((x) => [x.id, x]));

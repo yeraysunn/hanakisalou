@@ -138,6 +138,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
       + '<p>' + esc(p.nombre) + ' · <a href="tel:' + esc(p.telefono) + '">' + esc(p.telefono.replace(/^\+34/, '')) + '</a>' + (p.email ? ' · ' + esc(p.email) : '') + ' · ' + (p.previos ? '⭐ habitual (' + p.previos + ')' : '<b style="color:#E9B949">🆕 cliente nuevo</b>') + '</p>'
       + (p.tipo === 'domicilio' ? '<p>📍 ' + esc(p.direccion) + ', ' + esc(p.cp) + (p.notas_dir ? ' · ' + esc(p.notas_dir) : '') + ' · <a target="_blank" rel="noopener" href="https://maps.google.com/?q=' + (p.lat ? p.lat + ',' + p.lng : encodeURIComponent(p.direccion + ', ' + p.cp + ' Salou')) + '">mapa</a></p>' : '')
       + '<ul>' + p.items.map(function(x){ return '<li>' + x.uds + ' × ' + (x.num ? x.num + '. ' : '') + esc(x.nombre) + '</li>'; }).join('') + '</ul>'
+      + (p.items.some(function(x){ return x.alcohol; }) ? '<p style="color:#E36B74;font-weight:600">🔞 LLEVA ALCOHOL · pedir DNI al entregar</p>' : '')
       + (p.comentarios ? '<p style="color:#E9B949">💬 ' + esc(p.comentarios) + '</p>' : '')
       + '<p><b style="color:var(--txt-hi)">Total ' + eur(p.total) + '</b> · ' + pago(p) + '</p>'
       + '<div class="acc">' + acc + b('imprimir', '🖨️ TICKET') + '</div></div>';
@@ -155,6 +156,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
       + '<div class="g">' + esc(p.nombre) + '</div><div>Tel. ' + esc(p.telefono.replace(/^\+34/, '')) + '</div>'
       + (dom ? '<div class="g">' + esc(p.direccion) + '</div><div>' + esc(p.cp) + (p.notas_dir ? ' · ' + esc(p.notas_dir) : '') + '</div>' : '') + '<hr>'
       + '<table>' + p.items.map(function(x){ return '<tr><td><b>' + x.uds + 'x</b> ' + (x.num ? x.num + '. ' : '') + esc(x.nombre) + '</td><td class="r">' + eur(x.precio * x.uds) + '</td></tr>'; }).join('') + '</table>'
+      + (p.items.some(function(x){ return x.alcohol; }) ? '<hr><div class="g">*** LLEVA ALCOHOL ***<br>PEDIR DNI · SOLO +18</div>' : '')
       + (p.comentarios ? '<hr><div class="g">NOTA: ' + esc(p.comentarios) + '</div>' : '') + '<hr>'
       + '<table><tr><td>Subtotal</td><td class="r">' + eur(p.subtotal) + '</td></tr>' + (dom ? '<tr><td>Envío</td><td class="r">' + (p.envio ? eur(p.envio) : 'Gratis') + '</td></tr>' : '')
       + '<tr><td class="g">TOTAL</td><td class="r g">' + eur(p.total) + '</td></tr></table>'

@@ -3,7 +3,7 @@
 // Aviso al local por Telegram (marca cliente nuevo / habitual) y email «Hemos recibido tu pedido» al cliente.
 import { sesionValida } from '../fidelidad/_lib.js';
 import { horarioPrueba } from './_pedidos.js';
-import { json, db, handle, body, HttpError, nuevoToken, comprobarDireccion, normalizarTelefono, tablas, ajustes, horario, calcular, avisarTelegram, avisarCliente, previos, hoyMadrid, MAX_PENDIENTES, euros } from './_pedidos.js';
+import { json, db, handle, body, HttpError, nuevoToken, comprobarDireccion, alcoholPermitido, HORA_LIMITE_ALCOHOL, normalizarTelefono, tablas, ajustes, horario, calcular, avisarTelegram, avisarCliente, previos, hoyMadrid, MAX_PENDIENTES, euros } from './_pedidos.js';
 
 export const onRequestPost = handle(async (ctx) => {
   const { request, env } = ctx;
@@ -32,7 +32,11 @@ export const onRequestPost = handle(async (ctx) => {
   if (d.hora) { hora = String(d.hora); if (!h.horas.includes(hora)) throw new HttpError(400, 'Esa hora ya no está disponible. Elige otra.'); }
   else if (!h.asap) throw new HttpError(400, 'Ahora estamos cerrados: elige una hora para más tarde.');
   const pago = d.pago === 'tarjeta' ? 'tarjeta' : 'efectivo';
-  const { items, subtotal, envio, total } = calcular(d.items, tipo, aj);
+  const { items, subtotal, envio, total, alcohol } = calcular(d.items, tipo, aj);
+  if (alcohol) {
+    if (!alcoholPermitido(hora)) throw new HttpError(400, `Las bebidas con alcohol solo se venden para entregar antes de las ${HORA_LIMITE_ALCOHOL}. Quítalas del pedido o elige una hora anterior.`);
+    if (!d.mayor18) throw new HttpError(400, 'Tu pedido lleva alcohol: confirma que eres mayor de 18 años. Te pediremos el DNI al entregarlo.');
+  }
   let cambio = null;
   if (pago === 'efectivo' && d.cambio) {
     cambio = Math.round(Number(d.cambio) * 100);

@@ -16,6 +16,7 @@ export const DIAS_CERRADOS = [1];    // lunes
 // Ventanas de pedido: «lo antes posible» dentro de ellas; horas programadas cada 15 min
 export const TURNOS = [['12:30', '15:45'], ['19:30', '22:45']]; // la cocina cierra a las 16:00 y 23:00
 export const MARGEN_MIN = 30;        // una hora programada tiene que estar al menos 30 min en el futuro
+export const HORA_LIMITE_ALCOHOL = '22:00'; // no se entrega alcohol a partir de esta hora (prudencia: confirmar la ordenanza de Salou)
 export const MAX_UDS = 30;           // unidades máximas de un mismo producto
 export const MAX_PENDIENTES = 2;     // pedidos sin gestionar a la vez por teléfono
 export const ESTADOS = ['pendiente', 'aceptado', 'en_camino', 'entregado', 'rechazado', 'cancelado'];
@@ -137,6 +138,12 @@ export function horarioPrueba() {
   return { abierta: true, asap: true, horas, motivo: '🧪 Modo prueba (sesión del panel abierta): puedes pedir aunque esté cerrado. El pedido llegará marcado como PRUEBA.' };
 }
 
+// ¿Se puede vender alcohol para esa hora de entrega? (hora = 'HH:MM' o null = lo antes posible)
+export function alcoholPermitido(hora) {
+  const h = hora || horaMadrid();
+  return h < HORA_LIMITE_ALCOHOL && h >= '08:00';
+}
+
 // Carta pública con agotados y ocultos del día
 export function cartaPublica(aj) {
   return CATALOGO.filter((x) => !aj.ocultos.includes(x.id)).map((x) => ({ ...x, agotado: !!aj.agotados[x.id] }));
@@ -156,13 +163,13 @@ export function calcular(lineas, tipo, aj) {
     if (aj.agotados[p.id]) throw new HttpError(409, `«${p.nombre}» está agotado hoy. Quítalo del pedido.`);
     const ya = items.find((x) => x.id === p.id);
     if (ya) ya.uds = Math.min(MAX_UDS, ya.uds + uds);
-    else items.push({ id: p.id, num: p.num || '', nombre: p.nombre, precio: p.precio, uds });
+    else items.push({ id: p.id, num: p.num || '', nombre: p.nombre, precio: p.precio, uds, ...(p.alcohol ? { alcohol: 1 } : {}) });
   }
   if (!items.length) throw new HttpError(400, 'Tu pedido está vacío.');
   const subtotal = items.reduce((s, x) => s + x.precio * x.uds, 0);
   if (subtotal < MINIMO) throw new HttpError(400, `El pedido mínimo es de ${euros(MINIMO)} (llevas ${euros(subtotal)}).`);
   const envio = tipo === 'domicilio' && subtotal < ENVIO_GRATIS ? ENVIO : 0;
-  return { items, subtotal, envio, total: subtotal + envio };
+  return { items, subtotal, envio, total: subtotal + envio, alcohol: items.some((x) => x.alcohol) };
 }
 
 // ---------- textos ----------
@@ -182,6 +189,7 @@ export function textoTelegram(p) {
   if (p.previos != null) t += p.previos ? `⭐ Cliente habitual · ${p.previos} pedido${p.previos === 1 ? '' : 's'} entregado${p.previos === 1 ? '' : 's'}\n` : '🆕 <b>Cliente nuevo</b>\n';
   if (p.tipo === 'domicilio') t += `📍 <b>${esc(p.direccion)}</b>, ${esc(p.cp)} Salou${p.notas_dir ? ` · ${esc(p.notas_dir)}` : ''}${p.lat ? ` · <a href="https://maps.google.com/?q=${p.lat},${p.lng}">mapa</a>` : ''}\n`;
   t += '\n' + itemsDe(p).map((x) => `${x.uds} × ${x.num ? esc(x.num) + '. ' : ''}${esc(x.nombre)}  <i>${euros(x.precio * x.uds)}</i>`).join('\n') + '\n';
+  if (itemsDe(p).some((x) => x.alcohol)) t += `\n🔞 <b>LLEVA ALCOHOL · pedir DNI al entregar (solo mayores de 18)</b>\n`;
   if (p.comentarios) t += `\n💬 <b>${esc(p.comentarios)}</b>\n`;
   t += `\nSubtotal ${euros(p.subtotal)}${p.tipo === 'domicilio' ? ` · Envío ${p.envio ? euros(p.envio) : 'gratis'}` : ''}\n`;
   t += `💶 <b>TOTAL ${euros(p.total)}</b> · ${esc(pagoTexto(p))}\n`;
