@@ -60,7 +60,7 @@ export async function tablas(DB) {
   ]);
   // columnas añadidas después de crear la tabla
   const cols = new Set((await DB.prepare('PRAGMA table_info(pedidos)').all()).results.map((c) => c.name));
-  for (const [c, t] of [['email', 'TEXT'], ['previos', 'INTEGER']]) {
+  for (const [c, t] of [['email', 'TEXT'], ['previos', 'INTEGER'], ['prueba', 'INTEGER NOT NULL DEFAULT 0']]) {
     if (cols.has(c)) continue;
     try { await DB.prepare(`ALTER TABLE pedidos ADD COLUMN ${c} ${t}`).run(); } catch (e) { if (!/duplicate column/i.test(String(e && e.message))) throw e; }
   }
@@ -103,6 +103,13 @@ export function horario(aj) {
   return { abierta: true, asap, horas, motivo: asap ? '' : 'Ahora estamos cerrados: puedes dejar tu pedido programado para más tarde.' };
 }
 
+// Modo prueba: con la sesión del panel abierta se puede pedir a cualquier hora (el pedido va marcado 🧪 PRUEBA)
+export function horarioPrueba() {
+  const m = aMin(horaMadrid()), horas = [];
+  for (let x = Math.ceil((m + MARGEN_MIN) / 15) * 15; x < 24 * 60 && horas.length < 8; x += 15) horas.push(aHora(x));
+  return { abierta: true, asap: true, horas, motivo: '🧪 Modo prueba (sesión del panel abierta): puedes pedir aunque esté cerrado. El pedido llegará marcado como PRUEBA.' };
+}
+
 // Carta pública con agotados y ocultos del día
 export function cartaPublica(aj) {
   return CATALOGO.filter((x) => !aj.ocultos.includes(x.id)).map((x) => ({ ...x, agotado: !!aj.agotados[x.id] }));
@@ -141,7 +148,7 @@ const TITULO = { domicilio: '🛵 <b>PEDIDO A DOMICILIO</b>', recoger: '🥡 <b>
 const PIE = { aceptado: '✅ <b>ACEPTADO</b>', en_camino: '🛵 <b>EN CAMINO</b>', entregado: '✔️ <b>ENTREGADO</b>', rechazado: '❌ <b>RECHAZADO</b>', cancelado: '🚫 <b>CANCELADO</b>' };
 
 export function textoTelegram(p) {
-  let t = `${TITULO[p.tipo]} · Nº ${p.id}\n\n`;
+  let t = `${p.prueba ? '🧪 <b>PRUEBA · NO PREPARAR</b>\n' : ''}${TITULO[p.tipo]} · Nº ${p.id}\n\n`;
   t += `🕐 <b>${esc(p.hora ? 'Para las ' + p.hora : 'Lo antes posible')}</b>\n`;
   t += `👤 ${esc(p.nombre)} · 📞 ${esc(telBonito(p.telefono))}\n`;
   if (p.email) t += `📧 ${esc(p.email)}\n`;

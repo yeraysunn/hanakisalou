@@ -1,7 +1,9 @@
 // GET /api/pedidos/info — carta, reglas y horario de hoy
-import { json, db, handle, ajustes, horario, cartaPublica, CATEGORIAS, MINIMO, ENVIO, ENVIO_GRATIS } from './_pedidos.js';
+import { sesionValida } from '../fidelidad/_lib.js';
+import { json, db, handle, ajustes, horario, horarioPrueba, cartaPublica, CATEGORIAS, MINIMO, ENVIO, ENVIO_GRATIS } from './_pedidos.js';
 
-export const onRequestGet = handle(async ({ env }) => {
+export const onRequestGet = handle(async ({ request, env }) => {
   const aj = await ajustes(db(env));
-  return json({ ...horario(aj), minimo: MINIMO, envio: ENVIO, envioGratis: ENVIO_GRATIS, cps: aj.cps, categorias: CATEGORIAS, carta: cartaPublica(aj) });
+  const h = await sesionValida(request, env).catch(() => false) ? horarioPrueba() : horario(aj);
+  return json({ ...h, minimo: MINIMO, envio: ENVIO, envioGratis: ENVIO_GRATIS, cps: aj.cps, categorias: CATEGORIAS, carta: cartaPublica(aj) });
 });
