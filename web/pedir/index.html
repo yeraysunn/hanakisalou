@@ -146,7 +146,7 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
 
       <div class="campo"><label for="comentarios">COMENTARIOS <span style="font-weight:400;letter-spacing:0;color:var(--muted)">(alergias, sin picante…)</span></label><textarea id="comentarios" maxlength="300"></textarea></div>
       <input class="trampa" name="web" id="web" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="check"><input type="checkbox" id="privacidad"><span>He leído y acepto la <a href="/legal#privacidad" target="_blank">política de privacidad</a>.</span></label>
+      <label class="check"><input type="checkbox" id="privacidad"><span>Acepto las <a href="/pedir/condiciones" target="_blank">condiciones de venta</a> y la <a href="/legal#privacidad" target="_blank">política de privacidad</a>.</span></label>
       <button class="btn" type="submit" id="enviar">HACER PEDIDO</button>
       <p class="nota" style="margin-top:12px">El restaurante confirmará tu pedido y el tiempo de entrega. ¿Dudas? <a href="tel:+34613261135">613 261 135</a>.</p>
     </form>
@@ -275,7 +275,7 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     if (st.tipo === 'domicilio') {
       if (!st.dir || st.dir !== $('direccion').value) return fallo('Elige tu dirección de la lista (calle y número en Salou). Si no la encuentras, llámanos al 613 261 135.');
     }
-    if (!$('privacidad').checked) return fallo('Tienes que aceptar la política de privacidad.');
+    if (!$('privacidad').checked) return fallo('Tienes que aceptar las condiciones de venta y la política de privacidad.');
     var d = { tipo: st.tipo, nombre: $('nombre').value, telefono: $('telefono').value, email: $('email').value, direccion: st.tipo === 'domicilio' ? st.dir : '', notas_dir: $('notas').value,
       hora: $('hora').value, pago: st.pago, cambio: st.pago === 'efectivo' ? $('cambio').value.replace(',', '.').replace(/[^\d.]/g, '') : '',
       comentarios: $('comentarios').value, privacidad: true, web: $('web').value,

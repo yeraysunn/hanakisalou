@@ -38,7 +38,7 @@ export const onRequestPost = handle(async (ctx) => {
     cambio = Math.round(Number(d.cambio) * 100);
     if (!Number.isFinite(cambio) || cambio < total || cambio > 50000) throw new HttpError(400, `Indica con cuánto pagas (mínimo ${euros(total)}) o déjalo vacío si pagas justo.`);
   }
-  if (!d.privacidad) throw new HttpError(400, 'Tienes que aceptar la política de privacidad.');
+  if (!d.privacidad) throw new HttpError(400, 'Tienes que aceptar las condiciones de venta y la política de privacidad.');
   const { n } = await DB.prepare(`SELECT COUNT(*) n FROM pedidos WHERE telefono = ? AND estado = 'pendiente'`).bind(tel).first();
   if (n >= MAX_PENDIENTES) throw new HttpError(429, 'Ya tienes pedidos esperando confirmación. Llámanos al 613 261 135.');
 
