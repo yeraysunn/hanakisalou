@@ -7,6 +7,7 @@
 //                       EMAIL_RESPUESTAS (si el cliente responde al email, le llega a esta dirección)
 import { enviarEmail, escapar, firmar, secretoAdmin } from './fidelidad/_lib.js';
 
+export const PEDIR_RESENAS = false; // apagado a petición del restaurante (23-11-2026): no se envía ningún email pidiendo reseña
 export const DIAS_ENTRE_PETICIONES = 90;
 export const HORAS_DESPUES = 20; // se envía unas 20 h después de marcar la visita (al día siguiente por la tarde)
 // Ficha de Google Maps de Restaurante Sushi Hanaki (por si no se configura GOOGLE_RESENA_URL)
@@ -54,6 +55,7 @@ function email(nombre, enlace, baja) {
 // Programa el email. Nunca lanza: si algo falla, solo lo deja en el registro.
 // base = origen de la web (https://hanakisalou.com), origen = 'reserva' | 'tarjeta'
 export async function programarResena(env, DB, { email: para, nombre, origen, base }) {
+  if (!PEDIR_RESENAS) return false;
   try {
     para = String(para || '').trim().toLowerCase();
     if (!para || !env.RESEND_API_KEY || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(para)) return false;
