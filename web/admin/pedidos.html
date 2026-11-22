@@ -65,7 +65,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
     </div>
 
     <div class="caja">
-      <div class="fila"><span class="est">🖨️ Imprimir ticket al aceptar <span class="nota">(en este dispositivo)</span></span><button class="btn sec mini" id="autoimp"></button></div>
+      <div class="fila"><span class="est">🖨️ Imprimir ticket automáticamente <span class="nota">(en este dispositivo)</span></span><button class="btn sec mini" id="autoimp"></button></div>
       <p class="nota" style="margin:8px 0 0">Para que imprima sin preguntar, abre este panel en Chrome con la impresora de tickets como predeterminada (en el PC de la caja: acceso directo con <code>--kiosk-printing</code>). 🔔 Suena al entrar un pedido: deja esta página abierta.</p>
     </div>
 
@@ -84,7 +84,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
   var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); };
   var eur = function(c){ return (c / 100).toFixed(2).replace('.', ',') + ' €'; };
   var EST = { pendiente: 'NUEVO · SIN ACEPTAR', aceptado: 'ACEPTADO', en_camino: 'EN CAMINO / LISTO', entregado: 'ENTREGADO', rechazado: 'RECHAZADO', cancelado: 'CANCELADO' };
-  var D = null, conocidos = null, auto = localStorage.getItem('hk-autoimp') === '1', desde = localStorage.getItem('hk-autoimp-desde') || '', cola = [];
+  var D = null, conocidos = null, modo = localStorage.getItem('hk-autoimp-modo') || (localStorage.getItem('hk-autoimp') === '1' ? 'aceptar' : 'no'), desde = localStorage.getItem('hk-autoimp-desde') || '', cola = [];
   var tt; function toast(m){ $('toast').textContent = m; $('toast').hidden = false; clearTimeout(tt); tt = setTimeout(function(){ $('toast').hidden = true; }, 3500); }
 
   async function api(ruta, datos){
@@ -108,7 +108,12 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
     if (conocidos) { var nuevos = ids.filter(function(id){ return conocidos.indexOf(id) < 0; }); if (nuevos.length) { toast('🛵 Nuevo pedido'); pitido(); if (navigator.vibrate) navigator.vibrate([100, 60, 100]); } }
     conocidos = ids;
     // imprime solo lo aceptado después de activar la impresión en este dispositivo (y aún sin ticket)
-    if (auto) j.pedidos.forEach(function(p){ if ((p.estado === 'aceptado' || p.estado === 'en_camino') && !p.impreso && p.aceptado && p.aceptado >= desde && cola.indexOf(p.id) < 0) cola.push(p.id); });
+    // modo 'llegar': en cuanto entra el pedido · modo 'aceptar': cuando se acepta. Solo pedidos posteriores a activar la impresión aquí.
+    if (modo !== 'no') j.pedidos.slice().reverse().forEach(function(p){
+      if (p.impreso || cola.indexOf(p.id) >= 0 || ['rechazado', 'cancelado'].indexOf(p.estado) >= 0) return;
+      var ok = modo === 'llegar' ? p.creado >= desde : (p.estado !== 'pendiente' && p.aceptado && p.aceptado >= desde);
+      if (ok) cola.push(p.id);
+    });
     pintar(); imprimirCola();
     var pend = j.pedidos.filter(function(p){ return p.estado === 'pendiente'; }).length;
     document.title = (pend ? '(' + pend + ') ' : '') + 'Pedidos · Admin Hanaki';
@@ -122,7 +127,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
     $('pausa').textContent = a.pausa && h.abierta === false && a.activo ? 'QUITAR PAUSA' : 'PAUSAR 30 MIN';
     $('pausa').dataset.on = a.pausa && /volvemos/.test(h.motivo || '') ? '1' : '';
     $('pausa').textContent = $('pausa').dataset.on ? 'QUITAR PAUSA' : 'PAUSAR 30 MIN';
-    $('autoimp').textContent = auto ? 'ACTIVADO' : 'DESACTIVADO';
+    $('autoimp').textContent = { no: 'DESACTIVADO', llegar: 'AL LLEGAR EL PEDIDO', aceptar: 'AL ACEPTAR' }[modo];
     var vivos = D.pedidos.filter(function(p){ return ['rechazado','cancelado'].indexOf(p.estado) < 0; });
     $('resumen').textContent = vivos.length + ' pedidos · ' + eur(vivos.reduce(function(s, p){ return s + p.total; }, 0));
     $('lista').innerHTML = D.pedidos.length ? D.pedidos.map(tarjeta).join('') : '<div class="vacio">Todavía no hay pedidos hoy.</div>';
@@ -149,7 +154,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
   // ---------- ticket 80 mm ----------
   function ticket(p){
     var dom = p.tipo === 'domicilio';
-    $('ticket').innerHTML = '<h1>HANAKI SALOU</h1><div style="text-align:center">Carrer Major, 6 · 613 261 135</div><hr>'
+    $('ticket').innerHTML = (p.prueba ? '<div class="g" style="text-align:center">*** PRUEBA · NO PREPARAR ***</div>' : '') + '<h1>HANAKI SALOU</h1><div style="text-align:center">Carrer Major, 6 · 613 261 135</div><hr>'
       + '<div class="g">' + (dom ? 'A DOMICILIO' : 'PARA RECOGER') + ' · Nº ' + p.id + '</div>'
       + '<div class="g">' + (p.hora ? 'PARA LAS ' + p.hora : 'LO ANTES POSIBLE') + '</div>'
       + '<div>Pedido: ' + p.fecha.split('-').reverse().join('/') + ' ' + horaLocal(p.creado) + (p.minutos ? ' · ' + p.minutos + ' min' : '') + '</div><hr>'
@@ -189,7 +194,12 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
   });
   $('activo').onclick = async function(){ await api('/api/pedidos/admin/ajustes', { activo: !D.ajustes.activo }); cargar(); };
   $('pausa').onclick = async function(){ await api('/api/pedidos/admin/ajustes', { pausa: this.dataset.on ? 0 : 30 }); cargar(); };
-  $('autoimp').onclick = function(){ auto = !auto; localStorage.setItem('hk-autoimp', auto ? '1' : '0'); if (auto) { desde = new Date().toISOString().slice(0, 19).replace('T', ' '); localStorage.setItem('hk-autoimp-desde', desde); } pintar(); };
+  $('autoimp').onclick = function(){
+    var antes = modo; modo = { no: 'llegar', llegar: 'aceptar', aceptar: 'no' }[modo];
+    localStorage.setItem('hk-autoimp-modo', modo);
+    if (antes === 'no') { desde = new Date().toISOString().slice(0, 19).replace('T', ' '); localStorage.setItem('hk-autoimp-desde', desde); }
+    pintar();
+  };
 
   function pintarProds(){
     var q = $('buscar').value.trim().toLowerCase(), a = D.ajustes;
