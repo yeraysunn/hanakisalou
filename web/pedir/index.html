@@ -69,6 +69,14 @@ body{padding-bottom:110px}
 .campo select{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:15px 16px;border-radius:14px;width:100%}
 .campo textarea{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:12px 14px;border-radius:14px;min-height:70px;resize:vertical}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.dir{position:relative}
+.dir__lista{position:absolute;left:0;right:0;top:calc(100% - 22px);z-index:5;list-style:none;margin:0;padding:6px;background:#1C1B1A;border:1px solid var(--linea);border-radius:14px;box-shadow:0 20px 40px rgba(0,0,0,.6);max-height:280px;overflow:auto}
+.dir__lista li{padding:12px;border-radius:10px;cursor:pointer;font-size:14.5px;color:var(--txt-hi)}
+.dir__lista li:hover,.dir__lista li[aria-selected="true"]{background:var(--bg2)}
+.dir__lista li small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.dir__estado{font-size:12.5px;color:var(--muted);line-height:1.45}
+.dir__estado.ok{color:#5FB37A}.dir__estado.mal{color:var(--rojo)}
 h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);margin:22px 0 10px;text-transform:uppercase}
 </style>
 <script src="/estadisticas.js" defer></script>
@@ -84,7 +92,7 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
       <li>Pedido mínimo <b>15 €</b></li>
       <li>Envío <b>2,50 €</b></li>
       <li>Envío <b>gratis</b> desde 25 €</li>
-      <li id="zona">Salou y La Pineda</li>
+      <li>Reparto <b>solo en Salou</b></li>
     </ul>
     <div class="aviso" id="aviso" hidden></div>
   </section>
@@ -116,11 +124,12 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
       </div>
       <p class="nota" style="margin:-6px 0 14px">Te enviamos por email la confirmación y la hora de llegada. Puede que te llamemos para confirmar el pedido.</p>
       <div id="dirBox">
-        <div class="campo"><label for="direccion">DIRECCIÓN (CALLE Y NÚMERO)</label><input id="direccion" autocomplete="street-address" maxlength="160"></div>
-        <div class="dos">
-          <div class="campo"><label for="cp">CÓDIGO POSTAL</label><input id="cp" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="43840"></div>
-          <div class="campo"><label for="notas">PISO, PUERTA…</label><input id="notas" maxlength="160" placeholder="3º 2ª, timbre…"></div>
+        <div class="campo dir"><label for="direccion">DIRECCIÓN EN SALOU (CALLE Y NÚMERO)</label>
+          <input id="direccion" autocomplete="off" maxlength="160" placeholder="Ej.: Via Roma 10" role="combobox" aria-autocomplete="list" aria-controls="dirLista" aria-expanded="false">
+          <ul id="dirLista" class="dir__lista" role="listbox" hidden></ul>
+          <small id="dirEstado" class="dir__estado">Escribe la calle y el número y elige tu dirección de la lista. Solo repartimos en Salou.</small>
         </div>
+        <div class="campo"><label for="notas">PISO, PUERTA, URBANIZACIÓN…</label><input id="notas" maxlength="160" placeholder="3º 2ª, timbre…"></div>
       </div>
       <p class="nota" id="recogerTxt" hidden style="margin-top:0">Recoges en <b style="color:var(--txt-hi)">Carrer Major, 6 · Salou</b>. Te avisamos de cuándo estará listo en la página de seguimiento.</p>
 
@@ -153,12 +162,11 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
   var ALC = {G:'gluten',C:'crustaceos',H:'huevo',P:'pescado',Ca:'cacahuetes',S:'soja',L:'lactosa',F:'frutos',Ap:'apio',Mo:'mostaza',Se:'sesamo',Su:'sulfitos',Al:'altramuces',M:'moluscos',Pi:'picante',V:'vegetariano'};
   var info = null, porId = {}, st = { cart: {}, tipo: 'domicilio', pago: 'efectivo' };
   try { st.cart = JSON.parse(localStorage.getItem('hk-pedido') || '{}') || {}; } catch (e) {}
-  try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','telefono','email','direccion','cp','notas'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); if (dd.tipo) st.tipo = dd.tipo; } catch (e) {}
+  try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','telefono','email','notas'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); if (dd.direccion) { $('direccion').value = dd.direccion; st.dir = dd.direccion; } if (dd.tipo) st.tipo = dd.tipo; } catch (e) {}
 
   fetch('/api/pedidos/info', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){
     info = j; j.carta.forEach(function(x){ porId[x.id] = x; });
     Object.keys(st.cart).forEach(function(id){ if (!porId[id] || porId[id].agotado) delete st.cart[id]; });
-    $('zona').innerHTML = 'Reparto: CP <b>' + esc(j.cps.join(', ')) + '</b>';
     if (!j.abierta || j.motivo) { $('aviso').textContent = j.motivo + (j.abierta ? '' : ' Puedes llamarnos al 613 261 135.'); $('aviso').hidden = false; }
     pintarCarta(); pintar();
   }).catch(function(){ $('carta').innerHTML = '<p class="aviso">No se pudo cargar la carta. Recarga la página o llámanos al 613 261 135.</p>'; });
@@ -231,6 +239,33 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     if (!r.ok) throw new Error(j.error || 'Algo ha fallado. Inténtalo de nuevo.');
     return j;
   }
+  // ---------- buscador de direcciones (solo Salou) ----------
+  var dirT, dirN = 0, dirRes = [];
+  function dirMsg(t, c){ var e = $('dirEstado'); e.textContent = t; e.className = 'dir__estado' + (c ? ' ' + c : ''); }
+  function dirCerrar(){ $('dirLista').hidden = true; $('direccion').setAttribute('aria-expanded', 'false'); }
+  function dirElegir(r){
+    if (r.tipo === 'calle') { $('direccion').value = r.texto + ' '; $('direccion').focus(); dirMsg('Ahora escribe el número del portal.'); buscarDir(); return; }
+    $('direccion').value = r.texto; st.dir = r.texto; dirCerrar(); dirMsg('✓ ' + r.texto + ', ' + r.cp + ' Salou', 'ok');
+  }
+  function buscarDir(){
+    var q = $('direccion').value.trim(), n = ++dirN;
+    if (q.length < 3) { dirCerrar(); return; }
+    fetch('/api/pedidos/direccion?q=' + encodeURIComponent(q)).then(function(r){ return r.json(); }).then(function(j){
+      if (n !== dirN) return;
+      dirRes = j.resultados || [];
+      if (j.error) return dirMsg(j.error, 'mal');
+      if (!dirRes.length) { dirCerrar(); return dirMsg(/\d/.test(q) ? 'No encontramos esa dirección en Salou. Revisa la calle y el número. Solo repartimos en Salou.' : 'Sigue escribiendo la calle…', /\d/.test(q) ? 'mal' : ''); }
+      $('dirLista').innerHTML = dirRes.map(function(r, i){ return '<li role="option" data-i="' + i + '">' + esc(r.texto) + '<small>' + (r.tipo === 'calle' ? 'Calle · elige y añade el número' : r.cp + ' Salou') + '</small></li>'; }).join('');
+      $('dirLista').hidden = false; $('direccion').setAttribute('aria-expanded', 'true');
+      dirMsg('Elige tu dirección de la lista.');
+    }).catch(function(){});
+  }
+  $('direccion').addEventListener('input', function(){ st.dir = null; clearTimeout(dirT); dirT = setTimeout(buscarDir, 300); });
+  $('dirLista').addEventListener('mousedown', function(e){ var li = e.target.closest('li'); if (li) { e.preventDefault(); dirElegir(dirRes[+li.dataset.i]); } });
+  $('direccion').addEventListener('keydown', function(e){ if (e.key === 'Enter' && !$('dirLista').hidden && dirRes[0]) { e.preventDefault(); dirElegir(dirRes[0]); } if (e.key === 'Escape') dirCerrar(); });
+  $('direccion').addEventListener('blur', function(){ setTimeout(dirCerrar, 150); });
+  if (st.dir) dirMsg('✓ ' + st.dir + ' · Salou', 'ok');
+
   $('f').addEventListener('submit', async function(e){
     e.preventDefault(); err.hidden = true;
     if (subtotal() < info.minimo) return fallo('El pedido mínimo es de ' + eur(info.minimo) + '.');
@@ -238,18 +273,17 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     if ($('telefono').value.replace(/\D/g, '').length < 9) return fallo('Escribe tu móvil.');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($('email').value.trim())) return fallo('Escribe un email válido.');
     if (st.tipo === 'domicilio') {
-      if ($('direccion').value.trim().length < 5) return fallo('Escribe la dirección (calle y número).');
-      if (info.cps.indexOf($('cp').value.trim()) < 0) return fallo('No repartimos en ese código postal (repartimos en ' + info.cps.join(', ') + '). Puedes elegir «Recoger en local».');
+      if (!st.dir || st.dir !== $('direccion').value) return fallo('Elige tu dirección de la lista (calle y número en Salou). Si no la encuentras, llámanos al 613 261 135.');
     }
     if (!$('privacidad').checked) return fallo('Tienes que aceptar la política de privacidad.');
-    var d = { tipo: st.tipo, nombre: $('nombre').value, telefono: $('telefono').value, email: $('email').value, direccion: $('direccion').value, cp: $('cp').value.trim(), notas_dir: $('notas').value,
+    var d = { tipo: st.tipo, nombre: $('nombre').value, telefono: $('telefono').value, email: $('email').value, direccion: st.tipo === 'domicilio' ? st.dir : '', notas_dir: $('notas').value,
       hora: $('hora').value, pago: st.pago, cambio: st.pago === 'efectivo' ? $('cambio').value.replace(',', '.').replace(/[^\d.]/g, '') : '',
       comentarios: $('comentarios').value, privacidad: true, web: $('web').value,
       items: Object.keys(st.cart).map(function(id){ return { id: id, uds: st.cart[id] }; }) };
     var b = $('enviar'); b.disabled = true; b.textContent = 'ENVIANDO…';
     try {
       var j = await api('/api/pedidos/crear', d);
-      try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, telefono: d.telefono, email: d.email, direccion: d.direccion, cp: d.cp, notas: d.notas_dir, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
+      try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, telefono: d.telefono, email: d.email, direccion: d.direccion || st.dir || '', notas: d.notas_dir, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
       if (window.HK_STATS) HK_STATS.evento('pedido');
       location.href = '/pedir/pedido?t=' + j.token;
     } catch (ex) { fallo(ex.message); b.disabled = false; pintar(); }

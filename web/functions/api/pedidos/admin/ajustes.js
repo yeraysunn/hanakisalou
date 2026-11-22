@@ -1,4 +1,4 @@
-// POST /api/pedidos/admin/ajustes — {activo} · {cps} · {pausa: minutos | 0} · {agotado: id, valor} · {oculto: id, valor}
+// POST /api/pedidos/admin/ajustes — {activo} · {pausa: minutos | 0} · {agotado: id, valor} · {oculto: id, valor}
 import { json, db, handle, body, HttpError, ajustes, guardarAjuste, hoyMadrid, horaMadrid, POR_ID } from '../_pedidos.js';
 
 export const onRequestPost = handle(async ({ request, env }) => {
@@ -6,11 +6,6 @@ export const onRequestPost = handle(async ({ request, env }) => {
   const DB = db(env);
   const aj = await ajustes(DB);
   if ('activo' in d) await guardarAjuste(DB, 'activo', d.activo ? '1' : '0');
-  if ('cps' in d) {
-    const cps = String(d.cps).split(/[\s,;]+/).filter(Boolean);
-    if (!cps.length || cps.some((c) => !/^\d{5}$/.test(c))) throw new HttpError(400, 'Escribe códigos postales de 5 cifras separados por comas.');
-    await guardarAjuste(DB, 'cps', [...new Set(cps)].join(','));
-  }
   if ('pausa' in d) {
     const m = Math.max(0, Math.min(240, parseInt(d.pausa, 10) || 0));
     if (!m) await guardarAjuste(DB, 'pausa', '');

@@ -11,7 +11,7 @@ export { hoyMadrid, horaMadrid, CATALOGO, POR_ID, CATEGORIAS };
 export const MINIMO = 1500;          // pedido mínimo (productos), céntimos
 export const ENVIO = 250;            // gastos de envío
 export const ENVIO_GRATIS = 2500;    // envío gratis a partir de este subtotal
-export const CPS_DEFECTO = ['43840', '43481']; // Salou (incl. Cap Salou) y La Pineda — editable en el panel
+export const MUNICIPIO = { nombre: 'Salou', codigo: '43905' }; // solo se reparte dentro del municipio de Salou (dirección comprobada en CartoCiudad)
 export const DIAS_CERRADOS = [1];    // lunes
 // Ventanas de pedido: «lo antes posible» dentro de ellas; horas programadas cada 15 min
 export const TURNOS = [['12:30', '15:45'], ['19:30', '22:45']]; // la cocina cierra a las 16:00 y 23:00
@@ -60,14 +60,14 @@ export async function tablas(DB) {
   ]);
   // columnas añadidas después de crear la tabla
   const cols = new Set((await DB.prepare('PRAGMA table_info(pedidos)').all()).results.map((c) => c.name));
-  for (const [c, t] of [['email', 'TEXT'], ['previos', 'INTEGER'], ['prueba', 'INTEGER NOT NULL DEFAULT 0']]) {
+  for (const [c, t] of [['email', 'TEXT'], ['previos', 'INTEGER'], ['prueba', 'INTEGER NOT NULL DEFAULT 0'], ['lat', 'REAL'], ['lng', 'REAL']]) {
     if (cols.has(c)) continue;
     try { await DB.prepare(`ALTER TABLE pedidos ADD COLUMN ${c} ${t}`).run(); } catch (e) { if (!/duplicate column/i.test(String(e && e.message))) throw e; }
   }
   listo = true;
 }
 
-// Ajustes del panel: activo (pedidos online abiertos), cps, pausa (hasta 'YYYY-MM-DD HH:MM'), agotados {id: fecha}
+// Ajustes del panel: activo (pedidos online abiertos), pausa (hasta 'YYYY-MM-DD HH:MM'), agotados {id: fecha}
 export async function ajustes(DB) {
   await tablas(DB);
   const { results } = await DB.prepare('SELECT clave, valor FROM pedidos_ajustes').all();
@@ -77,7 +77,6 @@ export async function ajustes(DB) {
   for (const k of Object.keys(agotados)) if (agotados[k] !== hoy) delete agotados[k]; // «agotado» solo vale ese día
   return {
     activo: a.activo === '1',
-    cps: (a.cps ? a.cps.split(/[\s,;]+/).filter((x) => /^\d{5}$/.test(x)) : CPS_DEFECTO),
     pausa: a.pausa || '',
     agotados,
     ocultos: (() => { try { return JSON.parse(a.ocultos || '[]'); } catch { return []; } })(),
@@ -101,6 +100,34 @@ export function horario(aj) {
   for (const [a, b] of TURNOS) for (let m = aMin(a) + 15; m <= aMin(b); m += 15) if (m >= mAhora + MARGEN_MIN) horas.push(aHora(m));
   if (!asap && !horas.length) return { abierta: false, motivo: 'Por hoy ya no aceptamos más pedidos. Horario de pedidos: 12:30–15:45 y 19:30–22:45, de martes a domingo.', horas: [], asap: false };
   return { abierta: true, asap, horas, motivo: asap ? '' : 'Ahora estamos cerrados: puedes dejar tu pedido programado para más tarde.' };
+}
+
+// ---------- direcciones (CartoCiudad, callejero oficial del IGN; gratis) ----------
+const quitarTildes = (x) => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+export async function buscarDirecciones(q) {
+  const u = new URL('https://www.cartociudad.es/geocoder/api/geocoder/candidates');
+  u.searchParams.set('q', String(q).slice(0, 120) + ' salou'); u.searchParams.set('limit', '20');
+  const r = await fetch(u, { signal: AbortSignal.timeout(8000), cf: { cacheTtl: 86400, cacheEverything: true } }).catch(() => null);
+  if (!r || !r.ok) throw new HttpError(502, 'Ahora no podemos comprobar direcciones. Llámanos al 613 261 135 para hacer el pedido.');
+  const lista = await r.json().catch(() => []);
+  const out = [], vistos = new Set();
+  for (const x of Array.isArray(lista) ? lista : []) {
+    if (x.muniCode !== MUNICIPIO.codigo || !['portal', 'callejero'].includes(x.type)) continue;
+    const texto = String(x.address || '').replace(/,\s*Salou.*$/i, '').replace(/\s*\((DE|DEL|DE LA|DE LOS|DE LAS|DELS|DE L')\)/i, '').trim();
+    if (!texto || vistos.has(texto)) continue; vistos.add(texto);
+    out.push(x.type === 'portal'
+      ? { tipo: 'portal', texto, num: x.portalNumber, cp: x.postalCode, lat: x.lat, lng: x.lng }
+      : { tipo: 'calle', texto });
+  }
+  return out.slice(0, 8);
+}
+// Comprueba que la dirección elegida es un portal real de Salou. Devuelve { direccion, cp, lat, lng }.
+export async function comprobarDireccion(texto) {
+  const t = String(texto || '').trim();
+  if (!/\d/.test(t)) throw new HttpError(400, 'Escribe la calle y el número, y elige tu dirección de la lista.');
+  const r = (await buscarDirecciones(t)).find((x) => x.tipo === 'portal' && quitarTildes(x.texto) === quitarTildes(t));
+  if (!r) throw new HttpError(400, 'No encontramos esa dirección en Salou. Elígela de la lista (solo repartimos en Salou) o llámanos al 613 261 135.');
+  return { direccion: r.texto, cp: r.cp, lat: r.lat, lng: r.lng };
 }
 
 // Modo prueba: con la sesión del panel abierta se puede pedir a cualquier hora (el pedido va marcado 🧪 PRUEBA)
@@ -153,7 +180,7 @@ export function textoTelegram(p) {
   t += `👤 ${esc(p.nombre)} · 📞 ${esc(telBonito(p.telefono))}\n`;
   if (p.email) t += `📧 ${esc(p.email)}\n`;
   if (p.previos != null) t += p.previos ? `⭐ Cliente habitual · ${p.previos} pedido${p.previos === 1 ? '' : 's'} entregado${p.previos === 1 ? '' : 's'}\n` : '🆕 <b>Cliente nuevo</b>\n';
-  if (p.tipo === 'domicilio') t += `📍 <b>${esc(p.direccion)}</b>, ${esc(p.cp)}${p.notas_dir ? `\n     ${esc(p.notas_dir)}` : ''}\n`;
+  if (p.tipo === 'domicilio') t += `📍 <b>${esc(p.direccion)}</b>, ${esc(p.cp)} Salou${p.notas_dir ? ` · ${esc(p.notas_dir)}` : ''}${p.lat ? ` · <a href="https://maps.google.com/?q=${p.lat},${p.lng}">mapa</a>` : ''}\n`;
   t += '\n' + itemsDe(p).map((x) => `${x.uds} × ${x.num ? esc(x.num) + '. ' : ''}${esc(x.nombre)}  <i>${euros(x.precio * x.uds)}</i>`).join('\n') + '\n';
   if (p.comentarios) t += `\n💬 <b>${esc(p.comentarios)}</b>\n`;
   t += `\nSubtotal ${euros(p.subtotal)}${p.tipo === 'domicilio' ? ` · Envío ${p.envio ? euros(p.envio) : 'gratis'}` : ''}\n`;
