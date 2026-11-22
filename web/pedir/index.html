@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pedir a domicilio · Hanaki Salou</title>
+<meta name="description" content="Pide sushi, ramen y cocina japonesa de Hanaki Salou a domicilio o para recoger. Precio de carta, pago al recibir.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" type="image/png" href="/assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Saira+Extra+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/fidelidad/estilo.css">
+<style>
+body{padding-bottom:110px}
+.top{max-width:1180px;margin:0 auto;padding:22px 18px 0}
+.top .cab{margin-bottom:22px}
+.volver{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(243,239,232,.35);border-radius:99px;padding:11px 16px;text-decoration:none}
+.hero h1{font-size:clamp(54px,14vw,120px);margin:10px 0 14px}
+.hero .lead{max-width:560px;margin-bottom:18px}
+.reglas{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;padding:0;list-style:none}
+.reglas li{border:1px solid var(--linea);border-radius:99px;padding:9px 14px;font-size:13.5px;color:var(--txt-hi)}
+.reglas b{color:var(--rojo);font-weight:600}
+.aviso{background:var(--bg2);border-left:3px solid var(--rojo);border-radius:10px;padding:14px 16px;font-size:14.5px;line-height:1.55;color:var(--txt-hi);margin:6px 0 10px}
+.cats{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--linea)}
+.cats div{max-width:1180px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:12px 18px;scrollbar-width:none}
+.cats div::-webkit-scrollbar{display:none}
+.cats a{flex:none;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--linea);border-radius:99px;padding:10px 14px;color:var(--txt)}
+.cats a.on{background:var(--txt-hi);color:var(--tinta);border-color:var(--txt-hi)}
+.carta{max-width:1180px;margin:0 auto;padding:8px 18px 30px}
+.cat h2{font:900 clamp(34px,7vw,52px)/1 var(--disp);text-transform:uppercase;color:var(--txt-hi);margin:34px 0 14px;scroll-margin-top:70px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:10px}
+.it{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;background:var(--bg2);border-radius:18px;padding:10px;position:relative}
+.it.ago{opacity:.45}
+.it__img{width:96px;height:96px;border-radius:12px;overflow:hidden;background:#201f1d}
+.it__img img{width:100%;height:100%;object-fit:cover;display:block}
+.it__img.beb{display:grid;place-items:center}.it__img.beb img{width:70%;height:80%;object-fit:contain}
+.it h3{margin:0;font-size:15.5px;font-weight:600;color:var(--txt-hi);line-height:1.25}
+.it h3 em{font-style:normal;color:var(--muted);font-weight:500;font-size:12.5px;margin-right:6px}
+.it p{margin:3px 0 0;font-size:12.5px;color:var(--muted);line-height:1.35}
+.it .al{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}.it .al img{width:18px;height:18px}
+.it__pie{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.it__pie b{font:700 22px/1 var(--num);color:var(--txt-hi)}
+.mas{display:flex;align-items:center;gap:8px}
+.mas button{width:36px;height:36px;border-radius:50%;border:1px solid rgba(243,239,232,.35);background:none;color:var(--txt-hi);font-size:20px;line-height:1;cursor:pointer}
+.mas button.add{background:var(--rojo);border-color:var(--rojo);color:var(--tinta)}
+.mas output{font:700 20px/1 var(--num);min-width:18px;text-align:center;color:var(--txt-hi)}
+.chip-ago{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--rojo)}
+/* barra del carrito */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--bg) 60%,rgba(10,10,10,0))}
+.barra button{max-width:620px;margin:0 auto;display:flex;justify-content:space-between}
+.barra small{font-size:11px;letter-spacing:.08em;opacity:.8;text-transform:none;font-weight:500}
+/* hoja del pedido */
+.hoja{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:flex-end}
+.hoja__in{background:var(--bg);width:100%;max-width:620px;max-height:94dvh;overflow:auto;border-radius:24px 24px 0 0;padding:20px 18px calc(30px + env(safe-area-inset-bottom));border:1px solid var(--linea)}
+@media (min-width:700px){.hoja{align-items:center}.hoja__in{border-radius:24px;max-height:90dvh}}
+.hoja__cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hoja__cab h2{font:900 34px/1 var(--disp);text-transform:uppercase;color:var(--txt-hi);margin:0}
+.cerrar{background:none;border:1px solid var(--linea);color:var(--txt-hi);width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer}
+.lin{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--linea);font-size:14.5px}
+.lin span{color:var(--txt-hi)}
+.tot{display:grid;grid-template-columns:1fr auto;gap:6px;margin:14px 0 4px;font-size:14.5px}
+.tot b{color:var(--txt-hi);text-align:right}
+.tot .gran{font:700 28px/1 var(--num);color:var(--txt-hi)}
+.falta{font-size:13.5px;color:var(--rojo);margin:6px 0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;border:1px solid var(--linea);border-radius:99px;margin:18px 0 16px}
+.seg button{background:none;border:0;color:var(--txt);padding:12px 6px;border-radius:99px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--rojo);color:var(--tinta)}
+.campo select{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:15px 16px;border-radius:14px;width:100%}
+.campo textarea{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:12px 14px;border-radius:14px;min-height:70px;resize:vertical}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ver{border:1px solid var(--linea);border-radius:16px;padding:14px;margin-bottom:18px}
+.ver .fila{display:flex;gap:8px}.ver .fila input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:14px 16px;border-radius:14px;outline:none}.ver .fila input:focus{border-color:var(--txt-hi)}.ver .fila .btn{width:auto;min-height:52px;padding:0 18px}
+.ver .ok{color:var(--txt-hi);font-size:14.5px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ver .ok button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);margin:22px 0 10px;text-transform:uppercase}
+</style>
+<script src="/estadisticas.js" defer></script>
+</head>
+<body>
+<div class="top">
+  <header class="cab"><a href="/"><img src="/assets/logo.png" alt="花木"><span>HANAKI</span></a><a class="volver" href="/">← Inicio</a></header>
+  <section class="hero">
+    <div class="etq">A domicilio · para recoger</div>
+    <h1>Pide a<br>casa<em>.</em></h1>
+    <p class="lead">La carta de Hanaki a precio de restaurante, sin comisiones de apps. Pagas al recibir: en efectivo o con tarjeta.</p>
+    <ul class="reglas">
+      <li>Pedido mínimo <b>15 €</b></li>
+      <li>Envío <b>2,50 €</b></li>
+      <li>Envío <b>gratis</b> desde 25 €</li>
+      <li id="zona">Salou y La Pineda</li>
+    </ul>
+    <div class="aviso" id="aviso" hidden></div>
+  </section>
+</div>
+<nav class="cats" aria-label="Categorías"><div id="cats"></div></nav>
+<main class="carta" id="carta"><p class="nota">Cargando la carta…</p></main>
+
+<div class="barra" id="barra" hidden><button class="btn" id="verPedido" type="button"><span>VER MI PEDIDO · <span id="bUds">0</span></span><span id="bTot">0,00 €</span></button></div>
+
+<div class="hoja" id="hoja" hidden role="dialog" aria-modal="true" aria-labelledby="hTit">
+  <div class="hoja__in">
+    <div class="hoja__cab"><h2 id="hTit">Tu pedido</h2><button class="cerrar" type="button" id="cerrar" aria-label="Cerrar">✕</button></div>
+    <div id="lineas"></div>
+    <div class="seg" role="group" aria-label="Entrega">
+      <button type="button" data-tipo="domicilio" aria-pressed="true">A domicilio</button>
+      <button type="button" data-tipo="recoger" aria-pressed="false">Recoger en local</button>
+    </div>
+    <div class="tot" id="tot"></div>
+    <p class="falta" id="falta" hidden></p>
+
+    <form id="f" novalidate>
+      <div id="err" class="err" role="alert" hidden></div>
+
+      <h4>1 · Tu móvil</h4>
+      <div class="ver" id="ver">
+        <div id="verPaso1">
+          <p class="nota" style="margin:0 0 10px">Te mandamos un código por SMS para confirmar que el pedido es tuyo. Solo la primera vez.</p>
+          <div class="fila"><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="600 000 000" aria-label="Móvil" class="inp"><button class="btn" type="button" id="pedirCodigo">ENVIAR CÓDIGO</button></div>
+        </div>
+        <div id="verPaso2" hidden>
+          <p class="nota" style="margin:0 0 10px" id="verTxt">Escribe el código que te hemos enviado por SMS.</p>
+          <div class="fila"><input id="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Código" aria-label="Código SMS" class="inp"><button class="btn" type="button" id="comprobar">VERIFICAR</button></div>
+          <p class="nota" style="margin:8px 0 0"><a href="#" id="otroNum">Cambiar número</a> · <a href="#" id="reenviar">Reenviar código</a></p>
+        </div>
+        <div class="ok" id="verOk" hidden><span>✓ Móvil verificado: <b id="telOk"></b></span><button type="button" id="noSoyYo">Cambiar</button></div>
+      </div>
+
+      <h4>2 · Tus datos</h4>
+      <div class="campo"><label for="nombre">NOMBRE</label><input id="nombre" autocomplete="name" maxlength="60" required></div>
+      <div id="dirBox">
+        <div class="campo"><label for="direccion">DIRECCIÓN (CALLE Y NÚMERO)</label><input id="direccion" autocomplete="street-address" maxlength="160"></div>
+        <div class="dos">
+          <div class="campo"><label for="cp">CÓDIGO POSTAL</label><input id="cp" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="43840"></div>
+          <div class="campo"><label for="notas">PISO, PUERTA…</label><input id="notas" maxlength="160" placeholder="3º 2ª, timbre…"></div>
+        </div>
+      </div>
+      <p class="nota" id="recogerTxt" hidden style="margin-top:0">Recoges en <b style="color:var(--txt-hi)">Carrer Major, 6 · Salou</b>. Te avisamos de cuándo estará listo en la página de seguimiento.</p>
+
+      <h4>3 · ¿Cuándo?</h4>
+      <div class="campo"><select id="hora" aria-label="Hora"></select></div>
+
+      <h4>4 · Pago al recibir</h4>
+      <div class="seg" role="group" aria-label="Pago" style="margin-top:0">
+        <button type="button" data-pago="efectivo" aria-pressed="true">Efectivo</button>
+        <button type="button" data-pago="tarjeta" aria-pressed="false">Tarjeta</button>
+      </div>
+      <div class="campo" id="cambioBox"><label for="cambio">¿CON CUÁNTO PAGAS? <span style="font-weight:400;letter-spacing:0;color:var(--muted)">(opcional, para llevar cambio)</span></label><input id="cambio" inputmode="decimal" placeholder="Ej.: 50"></div>
+      <p class="nota" id="tarjetaTxt" hidden style="margin-top:0">El repartidor lleva datáfono.</p>
+
+      <div class="campo"><label for="comentarios">COMENTARIOS <span style="font-weight:400;letter-spacing:0;color:var(--muted)">(alergias, sin picante…)</span></label><textarea id="comentarios" maxlength="300"></textarea></div>
+      <input class="trampa" name="web" id="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="check"><input type="checkbox" id="privacidad"><span>He leído y acepto la <a href="/legal#privacidad" target="_blank">política de privacidad</a>.</span></label>
+      <button class="btn" type="submit" id="enviar">HACER PEDIDO</button>
+      <p class="nota" style="margin-top:12px">El restaurante confirmará tu pedido y el tiempo de entrega. ¿Dudas? <a href="tel:+34613261135">613 261 135</a>.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); };
+  var eur = function(c){ return (c / 100).toFixed(2).replace('.', ',') + ' €'; };
+  var ALK = {G:'Gluten',C:'Crustáceos',H:'Huevo',P:'Pescado',Ca:'Cacahuetes',S:'Soja',L:'Lactosa',F:'Frutos de cáscara',Ap:'Apio',Mo:'Mostaza',Se:'Sésamo',Su:'Sulfitos',Al:'Altramuces',M:'Moluscos',Pi:'Picante',V:'Vegetariano'};
+  var ALC = {G:'gluten',C:'crustaceos',H:'huevo',P:'pescado',Ca:'cacahuetes',S:'soja',L:'lactosa',F:'frutos',Ap:'apio',Mo:'mostaza',Se:'sesamo',Su:'sulfitos',Al:'altramuces',M:'moluscos',Pi:'picante',V:'vegetariano'};
+  var info = null, porId = {}, st = { cart: {}, tipo: 'domicilio', pago: 'efectivo', tel: null };
+  try { st.cart = JSON.parse(localStorage.getItem('hk-pedido') || '{}') || {}; } catch (e) {}
+  try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','direccion','cp','notas'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); if (dd.tipo) st.tipo = dd.tipo; } catch (e) {}
+
+  fetch('/api/pedidos/info', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){
+    info = j; j.carta.forEach(function(x){ porId[x.id] = x; });
+    Object.keys(st.cart).forEach(function(id){ if (!porId[id] || porId[id].agotado) delete st.cart[id]; });
+    st.tel = j.telefono;
+    $('zona').innerHTML = 'Reparto: CP <b>' + esc(j.cps.join(', ')) + '</b>';
+    if (!j.abierta || j.motivo) { $('aviso').textContent = j.motivo + (j.abierta ? '' : ' Puedes llamarnos al 613 261 135.'); $('aviso').hidden = false; }
+    pintarCarta(); pintar();
+  }).catch(function(){ $('carta').innerHTML = '<p class="aviso">No se pudo cargar la carta. Recarga la página o llámanos al 613 261 135.</p>'; });
+
+  function pintarCarta(){
+    var cats = info.categorias.filter(function(c){ return info.carta.some(function(x){ return x.cat === c; }); });
+    $('cats').innerHTML = cats.map(function(c, i){ return '<a href="#c' + i + '">' + esc(c) + '</a>'; }).join('');
+    $('carta').innerHTML = cats.map(function(c, i){
+      return '<section class="cat"><h2 id="c' + i + '">' + esc(c) + '</h2><div class="grid">' + info.carta.filter(function(x){ return x.cat === c; }).map(tarjeta).join('') + '</div></section>';
+    }).join('') + '<p class="nota" style="margin-top:30px">Precios con IVA incluido. Iconos: alérgenos según el Reglamento (UE) 1169/2011. Si tienes una alergia, indícalo en comentarios o llámanos antes de pedir.</p>';
+  }
+  function tarjeta(x){
+    var img = x.foto ? '<div class="it__img"><img src="/assets/pedir/' + esc(x.foto) + '.jpg" alt="" loading="lazy"></div>'
+      : '<div class="it__img beb">' + (x.bebida ? '<img src="/assets/bebidas/' + esc(x.bebida) + '.png" alt="" loading="lazy" onerror="this.remove()">' : '') + '</div>';
+    var al = (x.al || '').split(' ').filter(function(k){ return ALC[k]; }).map(function(k){ return '<img src="/assets/alergenos/' + ALC[k] + '.png" alt="' + ALK[k] + '" title="' + ALK[k] + '" loading="lazy">'; }).join('');
+    return '<article class="it' + (x.agotado ? ' ago' : '') + '">' + img + '<div><h3>' + (x.num ? '<em>Nº ' + esc(x.num) + '</em>' : '') + esc(x.nombre) + '</h3>'
+      + (x.desc ? '<p>' + esc(x.desc) + '</p>' : '') + (al ? '<div class="al">' + al + '</div>' : '')
+      + '<div class="it__pie"><b>' + eur(x.precio) + '</b>' + (x.agotado ? '<span class="chip-ago">Agotado hoy</span>' : '<div class="mas" data-id="' + esc(x.id) + '"></div>') + '</div></div></article>';
+  }
+  function uds(){ return Object.keys(st.cart).reduce(function(s, k){ return s + st.cart[k]; }, 0); }
+  function subtotal(){ return Object.keys(st.cart).reduce(function(s, k){ return s + (porId[k] ? porId[k].precio * st.cart[k] : 0); }, 0); }
+  function envio(){ return st.tipo === 'domicilio' && subtotal() < info.envioGratis ? info.envio : 0; }
+  function guardar(){ try { localStorage.setItem('hk-pedido', JSON.stringify(st.cart)); } catch (e) {} }
+  function cambiar(id, d){ var v = (st.cart[id] || 0) + d; if (v <= 0) delete st.cart[id]; else st.cart[id] = Math.min(30, v); guardar(); pintar(); }
+
+  function pintar(){
+    if (!info) return;
+    document.querySelectorAll('.mas[data-id]').forEach(function(m){
+      var n = st.cart[m.dataset.id] || 0;
+      m.innerHTML = n ? '<button type="button" data-d="-1" aria-label="Quitar uno">−</button><output>' + n + '</output><button type="button" data-d="1" aria-label="Añadir otro">+</button>'
+        : '<button type="button" class="add" data-d="1" aria-label="Añadir">+</button>';
+    });
+    var n = uds(), sub = subtotal();
+    $('barra').hidden = !n; $('bUds').textContent = n + (n === 1 ? ' producto' : ' productos'); $('bTot').textContent = eur(sub);
+    $('lineas').innerHTML = Object.keys(st.cart).map(function(id){
+      var x = porId[id]; return '<div class="lin"><span>' + esc(x.nombre) + '<br><small class="nota">' + eur(x.precio) + '</small></span><div class="mas" data-l="' + esc(id) + '"><button type="button" data-d="-1">−</button><output>' + st.cart[id] + '</output><button type="button" data-d="1">+</button></div></div>';
+    }).join('') || '<p class="nota">Tu pedido está vacío.</p>';
+    var env = envio();
+    $('tot').innerHTML = '<span>Subtotal</span><b>' + eur(sub) + '</b>' + (st.tipo === 'domicilio' ? '<span>Envío</span><b>' + (env ? eur(env) : 'Gratis') + '</b>' : '') + '<span>Total</span><b class="gran">' + eur(sub + env) + '</b>';
+    var msg = sub < info.minimo ? 'Te faltan ' + eur(info.minimo - sub) + ' para el pedido mínimo de ' + eur(info.minimo) + '.'
+      : (st.tipo === 'domicilio' && env ? 'Añade ' + eur(info.envioGratis - sub) + ' más y el envío es gratis.' : '');
+    $('falta').textContent = msg; $('falta').hidden = !msg; $('falta').style.color = sub < info.minimo ? 'var(--rojo)' : 'var(--muted)';
+    document.querySelectorAll('[data-tipo]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.tipo === st.tipo); });
+    document.querySelectorAll('[data-pago]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.pago === st.pago); });
+    $('dirBox').hidden = st.tipo !== 'domicilio'; $('recogerTxt').hidden = st.tipo === 'domicilio';
+    $('cambioBox').hidden = st.pago !== 'efectivo'; $('tarjetaTxt').hidden = st.pago !== 'tarjeta';
+    $('tarjetaTxt').textContent = st.tipo === 'domicilio' ? 'El repartidor lleva datáfono.' : 'Pagas con tarjeta al recoger.';
+    $('verPaso1').hidden = !!st.tel || !$('verPaso2').hidden; $('verOk').hidden = !st.tel; $('telOk').textContent = st.tel || '';
+    if (st.tel) $('verPaso2').hidden = true;
+    var sel = $('hora'), prev = sel.value;
+    sel.innerHTML = (info.asap ? '<option value="">Lo antes posible</option>' : '') + info.horas.map(function(h){ return '<option value="' + h + '">Hoy a las ' + h + '</option>'; }).join('');
+    if (prev && info.horas.indexOf(prev) >= 0) sel.value = prev;
+    $('enviar').disabled = !info.abierta;
+    $('enviar').textContent = info.abierta ? 'HACER PEDIDO · ' + eur(sub + env) : 'PEDIDOS CERRADOS AHORA';
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('.mas button'); if (!b) return;
+    var m = b.parentNode; cambiar(m.dataset.id || m.dataset.l, +b.dataset.d);
+  });
+  document.querySelectorAll('[data-tipo]').forEach(function(b){ b.onclick = function(){ st.tipo = b.dataset.tipo; pintar(); }; });
+  document.querySelectorAll('[data-pago]').forEach(function(b){ b.onclick = function(){ st.pago = b.dataset.pago; pintar(); }; });
+  $('verPedido').onclick = function(){ $('hoja').hidden = false; document.body.style.overflow = 'hidden'; if (window.HK_STATS) HK_STATS.evento('pedido_carrito'); };
+  $('cerrar').onclick = function(){ $('hoja').hidden = true; document.body.style.overflow = ''; };
+  $('hoja').addEventListener('click', function(e){ if (e.target === $('hoja')) $('cerrar').onclick(); });
+
+  var err = $('err');
+  function fallo(m){ err.textContent = m; err.hidden = false; err.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  async function api(url, datos, metodo){
+    var r = await fetch(url, { method: metodo || 'POST', headers: { 'content-type': 'application/json' }, body: datos ? JSON.stringify(datos) : undefined });
+    var j = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error(j.error || 'Algo ha fallado. Inténtalo de nuevo.');
+    return j;
+  }
+  async function enviarCodigo(){
+    err.hidden = true; var b = $('pedirCodigo'); b.disabled = true;
+    try {
+      var j = await api('/api/pedidos/sms', { telefono: $('tel').value, web: $('web').value });
+      $('verTxt').textContent = j.prueba || ('Te hemos enviado un código por SMS al ' + $('tel').value + '.');
+      $('verPaso1').hidden = true; $('verPaso2').hidden = false; $('codigo').focus();
+    } catch (ex) { fallo(ex.message); }
+    b.disabled = false;
+  }
+  $('pedirCodigo').onclick = enviarCodigo;
+  $('reenviar').onclick = function(e){ e.preventDefault(); enviarCodigo(); };
+  $('otroNum').onclick = function(e){ e.preventDefault(); $('verPaso2').hidden = true; $('verPaso1').hidden = false; };
+  $('comprobar').onclick = async function(){
+    err.hidden = true; this.disabled = true;
+    try { var j = await api('/api/pedidos/verificar', { telefono: $('tel').value, codigo: $('codigo').value }); st.tel = j.telefono; pintar(); }
+    catch (ex) { fallo(ex.message); }
+    this.disabled = false;
+  };
+  $('codigo').addEventListener('input', function(){ if (/^\d{6}$/.test(this.value)) $('comprobar').click(); });
+  $('noSoyYo').onclick = async function(){ await api('/api/pedidos/verificar', null, 'DELETE').catch(function(){}); st.tel = null; $('verPaso1').hidden = false; pintar(); };
+
+  $('f').addEventListener('submit', async function(e){
+    e.preventDefault(); err.hidden = true;
+    if (subtotal() < info.minimo) return fallo('El pedido mínimo es de ' + eur(info.minimo) + '.');
+    if (!st.tel) return fallo('Verifica tu móvil con el código SMS.');
+    if ($('nombre').value.trim().length < 2) return fallo('Escribe tu nombre.');
+    if (st.tipo === 'domicilio') {
+      if ($('direccion').value.trim().length < 5) return fallo('Escribe la dirección (calle y número).');
+      if (info.cps.indexOf($('cp').value.trim()) < 0) return fallo('No repartimos en ese código postal (repartimos en ' + info.cps.join(', ') + '). Puedes elegir «Recoger en local».');
+    }
+    if (!$('privacidad').checked) return fallo('Tienes que aceptar la política de privacidad.');
+    var d = { tipo: st.tipo, nombre: $('nombre').value, direccion: $('direccion').value, cp: $('cp').value.trim(), notas_dir: $('notas').value,
+      hora: $('hora').value, pago: st.pago, cambio: st.pago === 'efectivo' ? $('cambio').value.replace(',', '.').replace(/[^\d.]/g, '') : '',
+      comentarios: $('comentarios').value, privacidad: true, web: $('web').value,
+      items: Object.keys(st.cart).map(function(id){ return { id: id, uds: st.cart[id] }; }) };
+    var b = $('enviar'); b.disabled = true; b.textContent = 'ENVIANDO…';
+    try {
+      var j = await api('/api/pedidos/crear', d);
+      try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, direccion: d.direccion, cp: d.cp, notas: d.notas_dir, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
+      if (window.HK_STATS) HK_STATS.evento('pedido');
+      location.href = '/pedir/pedido?t=' + j.token;
+    } catch (ex) { fallo(ex.message); b.disabled = false; pintar(); }
+  });
+})();
+</script>
+</body>
+</html>

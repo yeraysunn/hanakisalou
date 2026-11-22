@@ -3,10 +3,12 @@
 //  · FIDELIDAD_PRIVADA: tarjeta de puntos (/fidelidad/ y sus APIs de cliente). Al abrirla, sacar también
 //    los bloques <template id="fid-privado"> de index.html y carta.html y volver a poner /fidelidad/ en sitemap.xml.
 //  · RESERVAS_PRIVADAS: reservas online (/reservas/ y /api/reservas/crear).
+//  · PEDIDOS_PRIVADOS: pedidos a domicilio (/pedir/ y las APIs de cliente de /api/pedidos/). Al abrirlo, añadir enlaces en la web y /pedir/ al sitemap.
 import { sesionValida } from './api/fidelidad/_lib.js';
 
 export const FIDELIDAD_PRIVADA = true;
 export const RESERVAS_PRIVADAS = false;
+export const PEDIDOS_PRIVADOS = false; // visible solo con el enlace directo (sin botones en la web, noindex)
 
 export function cerrar(activo, rutas, { pagina = false, mensaje = 'La tarjeta de puntos todavía no está disponible.' } = {}) {
   return async (ctx) => {

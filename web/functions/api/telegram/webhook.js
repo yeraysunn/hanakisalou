@@ -7,6 +7,7 @@
 import { db, tabla, HttpError } from '../reservas/_comun.js';
 import { cambiarEstado } from '../reservas/_estado.js';
 import { tg, textoReserva, mismoSecreto, secretoWebhook } from '../reservas/_telegram.js';
+import { cambiarEstado as estadoPedido, textoTelegram as textoPedido, botonesTelegram as botonesPedido } from '../pedidos/_pedidos.js';
 
 const vale = () => new Response('ok', { status: 200 });
 const lista = (v) => String(v || '').split(/[\s,;]+/).map((s) => s.trim()).filter(Boolean);
@@ -29,10 +30,12 @@ export async function onRequestPost(ctx) {
 async function boton(ctx, cq) {
   const { request, env } = ctx;
   const responder = (text, alerta = false) => tg(env, 'answerCallbackQuery', { callback_query_id: cq.id, text, show_alert: alerta }).catch((e) => console.error(e.message));
+  const chat = cq.message && cq.message.chat ? String(cq.message.chat.id) : '';
+  const ok = lista(env.TELEGRAM_CHAT_ID).includes(chat) || lista(env.TELEGRAM_PEDIDOS_CHAT_ID).includes(chat) || lista(env.TELEGRAM_STAFF_IDS).includes(String(cq.from && cq.from.id));
+  const mp = /^(pa|pr|pc|pe):(\d+)(?::(\d+))?$/.exec(String(cq.data || ''));
+  if (mp) return ok ? botonPedido(ctx, cq, mp, responder) : responder('No autorizado', true);
   const m = /^(ok|no):(\d+)$/.exec(String(cq.data || ''));
   if (!m) return responder('Botón no válido');
-  const chat = cq.message && cq.message.chat ? String(cq.message.chat.id) : '';
-  const ok = lista(env.TELEGRAM_CHAT_ID).includes(chat) || lista(env.TELEGRAM_STAFF_IDS).includes(String(cq.from && cq.from.id));
   if (!ok) return responder('No autorizado', true);
 
   const DB = db(env);
@@ -60,4 +63,25 @@ async function boton(ctx, cq) {
   if (res.ya) return responder(r.estado === 'confirmada' ? 'Ya estaba aceptada' : 'Ya estaba gestionada desde el panel');
   const em = res.email === true ? ' · email enviado' : res.email === 'error' ? ' · ⚠️ no se pudo enviar el email' : !r.email ? ' · sin email' : '';
   return responder((estado === 'confirmada' ? '✅ Aceptada' : '❌ Rechazada') + em, res.email === 'error');
+}
+
+// Botones de pedidos a domicilio: pa:<id>:<min> aceptar · pr:<id> rechazar · pc:<id> en camino / listo · pe:<id> entregado
+const ACCION = { pa: 'aceptado', pr: 'rechazado', pc: 'en_camino', pe: 'entregado' };
+const RESPUESTA = { aceptado: '✅ Aceptado', rechazado: '❌ Rechazado', en_camino: '🛵 En camino', entregado: '✔️ Entregado' };
+async function botonPedido(ctx, cq, m, responder) {
+  const { env } = ctx;
+  const estado = ACCION[m[1]];
+  let res;
+  try { res = await estadoPedido(db(env), Number(m[2]), estado, { minutos: m[3], motivo: estado === 'rechazado' ? 'desde Telegram' : null }); }
+  catch (e) {
+    if (e instanceof HttpError && e.status === 404) return responder('No encuentro ese pedido', true);
+    await responder('Error: hazlo desde el panel', true); throw e;
+  }
+  const p = { ...res.pedido, _quien: res.ya ? 'ya estaba gestionado' : nombreDe(cq.from) };
+  if (cq.message) {
+    await tg(env, 'editMessageText', { chat_id: cq.message.chat.id, message_id: cq.message.message_id, parse_mode: 'HTML', text: textoPedido(p).trim(), reply_markup: botonesPedido(p) })
+      .catch((e) => { if (!/not modified/i.test(e.descripcion || '')) console.error(e.message); });
+  }
+  if (res.ya) return responder('Ya estaba gestionado');
+  return responder(RESPUESTA[estado] + (estado === 'aceptado' ? ` · ${p.minutos} min` : ''));
 }
