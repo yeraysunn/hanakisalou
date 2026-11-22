@@ -1,13 +1,12 @@
-// POST /api/pedidos/crear — pedido a domicilio o para recoger. Exige móvil verificado por SMS (cookie).
+// POST /api/pedidos/crear — pedido a domicilio o para recoger (nombre, móvil, email; sin verificación).
 // El total se recalcula aquí con los precios de _catalogo.js. Pago al recibir: efectivo o tarjeta (datáfono).
-import { json, db, handle, body, HttpError, nuevoToken, tablas, ajustes, horario, calcular, telefonoVerificado, avisarTelegram, hoyMadrid, MAX_PENDIENTES, euros } from './_pedidos.js';
+// Aviso al local por Telegram (marca cliente nuevo / habitual) y email «Hemos recibido tu pedido» al cliente.
+import { json, db, handle, body, HttpError, nuevoToken, normalizarTelefono, tablas, ajustes, horario, calcular, avisarTelegram, avisarCliente, previos, hoyMadrid, MAX_PENDIENTES, euros } from './_pedidos.js';
 
 export const onRequestPost = handle(async (ctx) => {
   const { request, env } = ctx;
   const d = await body(request);
   if (d.web) return json({ ok: true });
-  const tel = await telefonoVerificado(request, env);
-  if (!tel) throw new HttpError(401, 'Verifica tu móvil para hacer el pedido.');
   const DB = db(env); await tablas(DB);
   const aj = await ajustes(DB);
   const h = horario(aj);
@@ -17,6 +16,10 @@ export const onRequestPost = handle(async (ctx) => {
   const tipo = d.tipo === 'recoger' ? 'recoger' : 'domicilio';
   const nombre = limpio(d.nombre, 60);
   if (nombre.length < 2) throw new HttpError(400, 'Escribe tu nombre.');
+  const tel = normalizarTelefono(d.telefono);
+  if (!tel) throw new HttpError(400, 'Escribe un teléfono válido.');
+  const email = String(d.email || '').trim().toLowerCase().slice(0, 120);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new HttpError(400, 'Escribe un email válido.');
   let direccion = null, cp = null, notas = null;
   if (tipo === 'domicilio') {
     direccion = limpio(d.direccion, 160); cp = limpio(d.cp, 5); notas = limpio(d.notas_dir, 160) || null;
@@ -37,10 +40,11 @@ export const onRequestPost = handle(async (ctx) => {
   const { n } = await DB.prepare(`SELECT COUNT(*) n FROM pedidos WHERE telefono = ? AND estado = 'pendiente'`).bind(tel).first();
   if (n >= MAX_PENDIENTES) throw new HttpError(429, 'Ya tienes pedidos esperando confirmación. Llámanos al 613 261 135.');
 
-  const p = await DB.prepare(`INSERT INTO pedidos (token, tipo, nombre, telefono, direccion, cp, notas_dir, hora, pago, cambio, items, subtotal, envio, total, comentarios, ip, fecha)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`)
-    .bind(nuevoToken(), tipo, nombre, tel, direccion, cp, notas, hora, pago, cambio, JSON.stringify(items), subtotal, envio, total,
+  const p = await DB.prepare(`INSERT INTO pedidos (token, tipo, nombre, telefono, email, previos, direccion, cp, notas_dir, hora, pago, cambio, items, subtotal, envio, total, comentarios, ip, fecha)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`)
+    .bind(nuevoToken(), tipo, nombre, tel, email, await previos(DB, tel), direccion, cp, notas, hora, pago, cambio, JSON.stringify(items), subtotal, envio, total,
       limpio(d.comentarios, 300) || null, request.headers.get('cf-connecting-ip') || '', hoyMadrid()).first();
   ctx.waitUntil(avisarTelegram(env, DB, p));
+  ctx.waitUntil(avisarCliente(env, p, new URL(request.url).origin));
   return json({ ok: true, token: p.token, id: p.id }, 201);
 });

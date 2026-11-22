@@ -1,6 +1,7 @@
 // Pedidos a domicilio y para recoger — utilidades compartidas (no crea ninguna ruta)
-// Pago al recibir (efectivo o datáfono del repartidor). El cliente verifica su móvil por SMS antes de pedir.
-import { HttpError, firmar, secretoAdmin } from '../fidelidad/_lib.js';
+// Pago al recibir (efectivo o datáfono del repartidor). Sin verificación: el cliente deja móvil y email,
+// el local ve en Telegram si es cliente nuevo o habitual (y llama si hace falta). El email avisa al cliente de cada paso.
+import { HttpError, enviarEmail, escapar } from '../fidelidad/_lib.js';
 import { hoyMadrid, horaMadrid } from '../reservas/_comun.js';
 import { CATALOGO, POR_ID, CATEGORIAS } from './_catalogo.js';
 export { json, db, handle, body, HttpError, normalizarTelefono, nuevoToken, escapar } from '../fidelidad/_lib.js';
@@ -36,6 +37,8 @@ export async function tablas(DB) {
       tipo TEXT NOT NULL,                 -- domicilio | recoger
       nombre TEXT NOT NULL,
       telefono TEXT NOT NULL,
+      email TEXT,
+      previos INTEGER,                    -- pedidos entregados antes con ese teléfono (0 = cliente nuevo)
       direccion TEXT, cp TEXT, notas_dir TEXT,
       hora TEXT,                          -- NULL = lo antes posible, o 'HH:MM'
       pago TEXT NOT NULL,                 -- efectivo | tarjeta
@@ -53,10 +56,14 @@ export async function tablas(DB) {
       aceptado TEXT, actualizado TEXT)`),
     DB.prepare('CREATE INDEX IF NOT EXISTS idx_ped_fecha ON pedidos(fecha, id)'),
     DB.prepare('CREATE INDEX IF NOT EXISTS idx_ped_tel ON pedidos(telefono, estado)'),
-    DB.prepare(`CREATE TABLE IF NOT EXISTS pedidos_sms (id INTEGER PRIMARY KEY AUTOINCREMENT, telefono TEXT NOT NULL, ip TEXT, creado TEXT NOT NULL DEFAULT (datetime('now')))`),
-    DB.prepare('CREATE INDEX IF NOT EXISTS idx_pedsms ON pedidos_sms(telefono, creado)'),
     DB.prepare(`CREATE TABLE IF NOT EXISTS pedidos_ajustes (clave TEXT PRIMARY KEY, valor TEXT)`),
   ]);
+  // columnas añadidas después de crear la tabla
+  const cols = new Set((await DB.prepare('PRAGMA table_info(pedidos)').all()).results.map((c) => c.name));
+  for (const [c, t] of [['email', 'TEXT'], ['previos', 'INTEGER']]) {
+    if (cols.has(c)) continue;
+    try { await DB.prepare(`ALTER TABLE pedidos ADD COLUMN ${c} ${t}`).run(); } catch (e) { if (!/duplicate column/i.test(String(e && e.message))) throw e; }
+  }
   listo = true;
 }
 
@@ -101,61 +108,7 @@ export function cartaPublica(aj) {
   return CATALOGO.filter((x) => !aj.ocultos.includes(x.id)).map((x) => ({ ...x, agotado: !!aj.agotados[x.id] }));
 }
 
-// ---------- verificación del móvil (cookie firmada) ----------
-const COOKIE_TEL = 'hk_tel';
-const DIAS_TEL = 90;
-const b64 = (s) => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-const unb64 = (s) => { try { return atob(s.replace(/-/g, '+').replace(/_/g, '/')); } catch { return ''; } };
-const secretoTel = (env) => 'hanaki-pedidos-tel:' + secretoAdmin(env);
-
-export async function cookieTelefono(env, tel, seguro = true) {
-  const exp = Math.floor(Date.now() / 1000) + DIAS_TEL * 86400;
-  const v = `${b64(tel)}.${exp}`;
-  const f = await firmar(v, secretoTel(env));
-  return `${COOKIE_TEL}=${v}.${f}; Path=/; Max-Age=${DIAS_TEL * 86400}; HttpOnly;${seguro ? ' Secure;' : ''} SameSite=Lax`;
-}
-export const cookieTelefonoFuera = `${COOKIE_TEL}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`;
-
-// Teléfono verificado de esta petición, o null
-export async function telefonoVerificado(request, env) {
-  const m = (request.headers.get('cookie') || '').match(new RegExp(COOKIE_TEL + '=([A-Za-z0-9_-]+)\\.(\\d+)\\.([a-f0-9]{64})'));
-  if (!m || Number(m[2]) < Date.now() / 1000) return null;
-  const f = await firmar(`${m[1]}.${m[2]}`, secretoTel(env));
-  let d = 0; for (let i = 0; i < 64; i++) d |= f.charCodeAt(i) ^ m[3].charCodeAt(i);
-  return d === 0 ? unb64(m[1]) || null : null;
-}
-
-// Solo móviles españoles (evita fraude de SMS a números internacionales de pago)
-export function movilEspanol(tel) { return /^\+34[67]\d{8}$/.test(tel || ''); }
 export const telBonito = (t) => String(t || '').replace(/^\+34(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3');
-
-// ---------- SMS (Twilio Verify) ----------
-// Variables: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SID. SMS_PRUEBA=1 → sin SMS, código 123456 (solo pruebas locales).
-export const smsPrueba = (env) => String(env.SMS_PRUEBA || '') === '1';
-export const smsConfigurado = (env) => smsPrueba(env) || !!(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_VERIFY_SID);
-async function twilio(env, ruta, datos) {
-  const r = await fetch(`https://verify.twilio.com/v2/Services/${env.TWILIO_VERIFY_SID}/${ruta}`, {
-    method: 'POST',
-    headers: { authorization: 'Basic ' + btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`), 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(datos),
-    signal: AbortSignal.timeout(10000),
-  }).catch(() => null);
-  if (!r) throw new HttpError(502, 'No se pudo enviar el SMS. Inténtalo de nuevo.');
-  const j = await r.json().catch(() => ({}));
-  return { ok: r.ok, status: r.status, j };
-}
-export async function enviarCodigo(env, tel) {
-  if (smsPrueba(env)) return;
-  const { ok, j } = await twilio(env, 'Verifications', { To: tel, Channel: 'sms', Locale: 'es' });
-  if (!ok) { console.error('twilio verify', j.code, j.message); throw new HttpError(502, 'No se pudo enviar el SMS a ese número. Revísalo o llámanos al 613 261 135.'); }
-}
-export async function comprobarCodigo(env, tel, codigo) {
-  if (smsPrueba(env)) return codigo === '123456';
-  const { ok, status, j } = await twilio(env, 'VerificationCheck', { To: tel, Code: codigo });
-  if (status === 404) return false; // caducado o demasiados intentos
-  if (!ok) { console.error('twilio check', j.code, j.message); throw new HttpError(502, 'No se pudo comprobar el código. Inténtalo de nuevo.'); }
-  return j.status === 'approved';
-}
 
 // ---------- cálculo del pedido (siempre en el servidor) ----------
 export function calcular(lineas, tipo, aj) {
@@ -190,7 +143,9 @@ const PIE = { aceptado: '✅ <b>ACEPTADO</b>', en_camino: '🛵 <b>EN CAMINO</b>
 export function textoTelegram(p) {
   let t = `${TITULO[p.tipo]} · Nº ${p.id}\n\n`;
   t += `🕐 <b>${esc(p.hora ? 'Para las ' + p.hora : 'Lo antes posible')}</b>\n`;
-  t += `👤 ${esc(p.nombre)} · 📞 ${esc(telBonito(p.telefono))} (verificado)\n`;
+  t += `👤 ${esc(p.nombre)} · 📞 ${esc(telBonito(p.telefono))}\n`;
+  if (p.email) t += `📧 ${esc(p.email)}\n`;
+  if (p.previos != null) t += p.previos ? `⭐ Cliente habitual · ${p.previos} pedido${p.previos === 1 ? '' : 's'} entregado${p.previos === 1 ? '' : 's'}\n` : '🆕 <b>Cliente nuevo</b>\n';
   if (p.tipo === 'domicilio') t += `📍 <b>${esc(p.direccion)}</b>, ${esc(p.cp)}${p.notas_dir ? `\n     ${esc(p.notas_dir)}` : ''}\n`;
   t += '\n' + itemsDe(p).map((x) => `${x.uds} × ${x.num ? esc(x.num) + '. ' : ''}${esc(x.nombre)}  <i>${euros(x.precio * x.uds)}</i>`).join('\n') + '\n';
   if (p.comentarios) t += `\n💬 <b>${esc(p.comentarios)}</b>\n`;
@@ -269,4 +224,59 @@ export function vistaCliente(p) {
     direccion: p.direccion, cp: p.cp, pago: p.pago, cambio: p.cambio, items: itemsDe(p), subtotal: p.subtotal, envio: p.envio, total: p.total,
     minutos: p.minutos, aceptado: p.aceptado ? p.aceptado.replace(' ', 'T') + 'Z' : null, creado: p.creado.replace(' ', 'T') + 'Z', motivo: p.motivo,
   };
+}
+
+// Pedidos entregados antes con este teléfono (para marcar cliente nuevo / habitual)
+export async function previos(DB, tel, sinId = 0) {
+  const r = await DB.prepare(`SELECT COUNT(*) n FROM pedidos WHERE telefono = ? AND estado = 'entregado' AND id != ?`).bind(tel, sinId).first();
+  return r.n;
+}
+
+// ---------- emails al cliente ----------
+const ASUNTO = {
+  pendiente: 'Hemos recibido tu pedido', aceptado: 'Tu pedido está aceptado', en_camino: 'Tu pedido está en camino',
+  rechazado: 'No podemos atender tu pedido', cancelado: 'Tu pedido se ha cancelado',
+};
+function horaLlegada(p) {
+  if (!p.aceptado || !p.minutos) return p.hora || '';
+  const t = new Date(Date.parse(p.aceptado.replace(' ', 'T') + 'Z') + p.minutos * 60000);
+  const h = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', hour12: false }).format(t);
+  return p.hora && p.hora > h ? p.hora : h;
+}
+export function emailPedido(p, base) {
+  const dom = p.tipo === 'domicilio', titulo = p.estado === 'en_camino' && !dom ? 'Tu pedido está listo para recoger' : ASUNTO[p.estado];
+  const llega = horaLlegada(p);
+  const intro = {
+    pendiente: 'gracias por tu pedido. El restaurante lo está revisando y te avisaremos por email en cuanto lo acepte.',
+    aceptado: dom ? `ya lo estamos preparando. Llegará aproximadamente a las <b style="color:#F2EEE8">${llega}</b>.` : `ya lo estamos preparando. Estará listo aproximadamente a las <b style="color:#F2EEE8">${llega}</b> en Carrer Major, 6.`,
+    en_camino: dom ? 'el repartidor ya ha salido hacia tu casa.' : 'ya puedes pasar a recogerlo por Carrer Major, 6 · Salou.',
+    rechazado: 'lo sentimos mucho: ahora mismo no podemos atender tu pedido. No se te ha cobrado nada.' + (p.motivo && p.motivo !== 'desde Telegram' ? ` Motivo: ${escapar(p.motivo)}.` : '') + ' Si quieres, llámanos al 613 261 135.',
+    cancelado: 'tu pedido se ha cancelado. Si crees que es un error, llámanos al 613 261 135.',
+  }[p.estado];
+  const enlace = `${base}/pedir/pedido?t=${p.token}`;
+  const filas = itemsDe(p).map((x) => `<tr><td style="padding:8px 16px;border-top:1px solid #2a2a2a">${x.uds} × ${escapar(x.nombre)}</td><td style="padding:8px 16px;border-top:1px solid #2a2a2a;text-align:right;white-space:nowrap">${euros(x.precio * x.uds)}</td></tr>`).join('')
+    + (dom ? `<tr><td style="padding:8px 16px;border-top:1px solid #2a2a2a">Envío</td><td style="padding:8px 16px;border-top:1px solid #2a2a2a;text-align:right">${p.envio ? euros(p.envio) : 'Gratis'}</td></tr>` : '')
+    + `<tr><td style="padding:12px 16px;border-top:1px solid #6b5a3a;font-weight:bold">Total · ${p.pago === 'tarjeta' ? 'tarjeta' : 'efectivo'} al ${dom ? 'recibir' : 'recoger'}</td><td style="padding:12px 16px;border-top:1px solid #6b5a3a;text-align:right;font-weight:bold">${euros(p.total)}</td></tr>`;
+  const html = `<!doctype html><html><body style="margin:0;background:#0A0A0A;font-family:Helvetica,Arial,sans-serif">
+  <div style="max-width:480px;margin:0 auto;padding:36px 24px;color:#BDB7AE">
+    <div style="font-family:Georgia,serif;font-size:22px;letter-spacing:.3em;color:#F2EEE8">HANAKI</div>
+    <div style="font-size:11px;letter-spacing:.26em;color:#C9A45C;margin-top:4px">PEDIDO Nº ${p.id} · ${dom ? 'A DOMICILIO' : 'PARA RECOGER'}</div>
+    <h1 style="font-family:Georgia,serif;font-weight:normal;font-size:28px;color:#F2EEE8;margin:28px 0 10px">${titulo}</h1>
+    <p style="font-size:15px;line-height:1.6;margin:0 0 20px">Hola ${escapar(p.nombre)}, ${intro}</p>
+    <table style="width:100%;border-collapse:collapse;font-size:14.5px;color:#F2EEE8;background:#141414;border:1px solid #6b5a3a">${filas}</table>
+    ${dom ? `<p style="font-size:14px;line-height:1.6;margin:16px 0 0">Entrega en: ${escapar(p.direccion)}, ${escapar(p.cp)}${p.notas_dir ? ' · ' + escapar(p.notas_dir) : ''}</p>` : ''}
+    ${['pendiente', 'aceptado', 'en_camino'].includes(p.estado) ? `<a href="${enlace}" style="display:block;margin:22px 0 0;padding:15px 18px;background:#E0452E;border-radius:999px;color:#0A0A0A;text-align:center;text-decoration:none;font-size:12px;font-weight:bold;letter-spacing:.2em">VER MI PEDIDO</a>` : ''}
+    <p style="font-size:13px;line-height:1.6;margin:22px 0 0">Hanaki Salou · Carrer Major, 6 · 43840 Salou<br>Teléfono: 613 261 135</p>
+  </div></body></html>`;
+  const texto = `${titulo}. Pedido nº ${p.id}, total ${euros(p.total)}.${llega && ['aceptado'].includes(p.estado) ? ' Hora aproximada: ' + llega + '.' : ''} Sigue tu pedido: ${enlace} · Hanaki Salou, 613 261 135`;
+  return { asunto: `${titulo} · Pedido nº ${p.id}`, html, texto };
+}
+// Envía el email del estado actual (si el cliente dejó email). Nunca lanza: el pedido no debe fallar por un email.
+export async function avisarCliente(env, p, base) {
+  if (!p.email || !ASUNTO[p.estado]) return;
+  if (!base || /pages\.dev/.test(base)) base = 'https://hanakisalou.com'; // el webhook de Telegram puede llegar por *.pages.dev
+  try {
+    const m = emailPedido(p, base);
+    await enviarEmail(env, { para: p.email, asunto: m.asunto, html: m.html, texto: m.texto, de: 'Hanaki Salou <pedidos@hanakisalou.com>', idem: `hanaki-pedido-${p.id}-${p.estado}` });
+  } catch (e) { console.error('email pedido', p.id, e && e.message); }
 }

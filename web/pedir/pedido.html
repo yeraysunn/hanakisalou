@@ -52,7 +52,7 @@
     var dom = p.tipo === 'domicilio';
     $('num').textContent = 'Pedido nº ' + p.id + (dom ? ' · a domicilio' : ' · para recoger');
     var T = {
-      pendiente: ['Pedido <em>enviado</em>', 'El restaurante lo está revisando. Esta página se actualiza sola, no hace falta que la recargues.'],
+      pendiente: ['Pedido <em>enviado</em>', 'El restaurante lo está revisando. Te avisaremos por email. Esta página también se actualiza sola.'],
       aceptado: ['¡Pedido <em>aceptado</em>!', dom ? 'Ya lo estamos preparando.' : 'Ya lo estamos preparando. Te esperamos en Carrer Major, 6.'],
       en_camino: dom ? ['¡En <em>camino</em>!', 'El repartidor ya ha salido hacia tu casa.'] : ['¡Listo para <em>recoger</em>!', 'Pásate por Carrer Major, 6 · Salou.'],
       entregado: ['¡Que <em>aproveche</em>!', 'Gracias por pedir en Hanaki Salou.'],

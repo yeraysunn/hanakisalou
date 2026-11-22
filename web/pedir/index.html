@@ -69,10 +69,6 @@ body{padding-bottom:110px}
 .campo select{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:15px 16px;border-radius:14px;width:100%}
 .campo textarea{background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:12px 14px;border-radius:14px;min-height:70px;resize:vertical}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ver{border:1px solid var(--linea);border-radius:16px;padding:14px;margin-bottom:18px}
-.ver .fila{display:flex;gap:8px}.ver .fila input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--linea);color:var(--txt-hi);padding:14px 16px;border-radius:14px;outline:none}.ver .fila input:focus{border-color:var(--txt-hi)}.ver .fila .btn{width:auto;min-height:52px;padding:0 18px}
-.ver .ok{color:var(--txt-hi);font-size:14.5px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.ver .ok button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
 h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);margin:22px 0 10px;text-transform:uppercase}
 </style>
 <script src="/estadisticas.js" defer></script>
@@ -112,22 +108,13 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     <form id="f" novalidate>
       <div id="err" class="err" role="alert" hidden></div>
 
-      <h4>1 · Tu móvil</h4>
-      <div class="ver" id="ver">
-        <div id="verPaso1">
-          <p class="nota" style="margin:0 0 10px">Te mandamos un código por SMS para confirmar que el pedido es tuyo. Solo la primera vez.</p>
-          <div class="fila"><input id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="600 000 000" aria-label="Móvil" class="inp"><button class="btn" type="button" id="pedirCodigo">ENVIAR CÓDIGO</button></div>
-        </div>
-        <div id="verPaso2" hidden>
-          <p class="nota" style="margin:0 0 10px" id="verTxt">Escribe el código que te hemos enviado por SMS.</p>
-          <div class="fila"><input id="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Código" aria-label="Código SMS" class="inp"><button class="btn" type="button" id="comprobar">VERIFICAR</button></div>
-          <p class="nota" style="margin:8px 0 0"><a href="#" id="otroNum">Cambiar número</a> · <a href="#" id="reenviar">Reenviar código</a></p>
-        </div>
-        <div class="ok" id="verOk" hidden><span>✓ Móvil verificado: <b id="telOk"></b></span><button type="button" id="noSoyYo">Cambiar</button></div>
-      </div>
-
-      <h4>2 · Tus datos</h4>
+      <h4>1 · Tus datos</h4>
       <div class="campo"><label for="nombre">NOMBRE</label><input id="nombre" autocomplete="name" maxlength="60" required></div>
+      <div class="dos">
+        <div class="campo"><label for="telefono">MÓVIL</label><input id="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="600 000 000"></div>
+        <div class="campo"><label for="email">EMAIL</label><input id="email" type="email" inputmode="email" autocomplete="email" maxlength="120"></div>
+      </div>
+      <p class="nota" style="margin:-6px 0 14px">Te enviamos por email la confirmación y la hora de llegada. Puede que te llamemos para confirmar el pedido.</p>
       <div id="dirBox">
         <div class="campo"><label for="direccion">DIRECCIÓN (CALLE Y NÚMERO)</label><input id="direccion" autocomplete="street-address" maxlength="160"></div>
         <div class="dos">
@@ -137,10 +124,10 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
       </div>
       <p class="nota" id="recogerTxt" hidden style="margin-top:0">Recoges en <b style="color:var(--txt-hi)">Carrer Major, 6 · Salou</b>. Te avisamos de cuándo estará listo en la página de seguimiento.</p>
 
-      <h4>3 · ¿Cuándo?</h4>
+      <h4>2 · ¿Cuándo?</h4>
       <div class="campo"><select id="hora" aria-label="Hora"></select></div>
 
-      <h4>4 · Pago al recibir</h4>
+      <h4>3 · Pago al recibir</h4>
       <div class="seg" role="group" aria-label="Pago" style="margin-top:0">
         <button type="button" data-pago="efectivo" aria-pressed="true">Efectivo</button>
         <button type="button" data-pago="tarjeta" aria-pressed="false">Tarjeta</button>
@@ -164,14 +151,13 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
   var eur = function(c){ return (c / 100).toFixed(2).replace('.', ',') + ' €'; };
   var ALK = {G:'Gluten',C:'Crustáceos',H:'Huevo',P:'Pescado',Ca:'Cacahuetes',S:'Soja',L:'Lactosa',F:'Frutos de cáscara',Ap:'Apio',Mo:'Mostaza',Se:'Sésamo',Su:'Sulfitos',Al:'Altramuces',M:'Moluscos',Pi:'Picante',V:'Vegetariano'};
   var ALC = {G:'gluten',C:'crustaceos',H:'huevo',P:'pescado',Ca:'cacahuetes',S:'soja',L:'lactosa',F:'frutos',Ap:'apio',Mo:'mostaza',Se:'sesamo',Su:'sulfitos',Al:'altramuces',M:'moluscos',Pi:'picante',V:'vegetariano'};
-  var info = null, porId = {}, st = { cart: {}, tipo: 'domicilio', pago: 'efectivo', tel: null };
+  var info = null, porId = {}, st = { cart: {}, tipo: 'domicilio', pago: 'efectivo' };
   try { st.cart = JSON.parse(localStorage.getItem('hk-pedido') || '{}') || {}; } catch (e) {}
-  try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','direccion','cp','notas'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); if (dd.tipo) st.tipo = dd.tipo; } catch (e) {}
+  try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','telefono','email','direccion','cp','notas'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); if (dd.tipo) st.tipo = dd.tipo; } catch (e) {}
 
   fetch('/api/pedidos/info', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){
     info = j; j.carta.forEach(function(x){ porId[x.id] = x; });
     Object.keys(st.cart).forEach(function(id){ if (!porId[id] || porId[id].agotado) delete st.cart[id]; });
-    st.tel = j.telefono;
     $('zona').innerHTML = 'Reparto: CP <b>' + esc(j.cps.join(', ')) + '</b>';
     if (!j.abierta || j.motivo) { $('aviso').textContent = j.motivo + (j.abierta ? '' : ' Puedes llamarnos al 613 261 135.'); $('aviso').hidden = false; }
     pintarCarta(); pintar();
@@ -220,8 +206,6 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     $('dirBox').hidden = st.tipo !== 'domicilio'; $('recogerTxt').hidden = st.tipo === 'domicilio';
     $('cambioBox').hidden = st.pago !== 'efectivo'; $('tarjetaTxt').hidden = st.pago !== 'tarjeta';
     $('tarjetaTxt').textContent = st.tipo === 'domicilio' ? 'El repartidor lleva datáfono.' : 'Pagas con tarjeta al recoger.';
-    $('verPaso1').hidden = !!st.tel || !$('verPaso2').hidden; $('verOk').hidden = !st.tel; $('telOk').textContent = st.tel || '';
-    if (st.tel) $('verPaso2').hidden = true;
     var sel = $('hora'), prev = sel.value;
     sel.innerHTML = (info.asap ? '<option value="">Lo antes posible</option>' : '') + info.horas.map(function(h){ return '<option value="' + h + '">Hoy a las ' + h + '</option>'; }).join('');
     if (prev && info.horas.indexOf(prev) >= 0) sel.value = prev;
@@ -247,45 +231,25 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     if (!r.ok) throw new Error(j.error || 'Algo ha fallado. Inténtalo de nuevo.');
     return j;
   }
-  async function enviarCodigo(){
-    err.hidden = true; var b = $('pedirCodigo'); b.disabled = true;
-    try {
-      var j = await api('/api/pedidos/sms', { telefono: $('tel').value, web: $('web').value });
-      $('verTxt').textContent = j.prueba || ('Te hemos enviado un código por SMS al ' + $('tel').value + '.');
-      $('verPaso1').hidden = true; $('verPaso2').hidden = false; $('codigo').focus();
-    } catch (ex) { fallo(ex.message); }
-    b.disabled = false;
-  }
-  $('pedirCodigo').onclick = enviarCodigo;
-  $('reenviar').onclick = function(e){ e.preventDefault(); enviarCodigo(); };
-  $('otroNum').onclick = function(e){ e.preventDefault(); $('verPaso2').hidden = true; $('verPaso1').hidden = false; };
-  $('comprobar').onclick = async function(){
-    err.hidden = true; this.disabled = true;
-    try { var j = await api('/api/pedidos/verificar', { telefono: $('tel').value, codigo: $('codigo').value }); st.tel = j.telefono; pintar(); }
-    catch (ex) { fallo(ex.message); }
-    this.disabled = false;
-  };
-  $('codigo').addEventListener('input', function(){ if (/^\d{6}$/.test(this.value)) $('comprobar').click(); });
-  $('noSoyYo').onclick = async function(){ await api('/api/pedidos/verificar', null, 'DELETE').catch(function(){}); st.tel = null; $('verPaso1').hidden = false; pintar(); };
-
   $('f').addEventListener('submit', async function(e){
     e.preventDefault(); err.hidden = true;
     if (subtotal() < info.minimo) return fallo('El pedido mínimo es de ' + eur(info.minimo) + '.');
-    if (!st.tel) return fallo('Verifica tu móvil con el código SMS.');
     if ($('nombre').value.trim().length < 2) return fallo('Escribe tu nombre.');
+    if ($('telefono').value.replace(/\D/g, '').length < 9) return fallo('Escribe tu móvil.');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($('email').value.trim())) return fallo('Escribe un email válido.');
     if (st.tipo === 'domicilio') {
       if ($('direccion').value.trim().length < 5) return fallo('Escribe la dirección (calle y número).');
       if (info.cps.indexOf($('cp').value.trim()) < 0) return fallo('No repartimos en ese código postal (repartimos en ' + info.cps.join(', ') + '). Puedes elegir «Recoger en local».');
     }
     if (!$('privacidad').checked) return fallo('Tienes que aceptar la política de privacidad.');
-    var d = { tipo: st.tipo, nombre: $('nombre').value, direccion: $('direccion').value, cp: $('cp').value.trim(), notas_dir: $('notas').value,
+    var d = { tipo: st.tipo, nombre: $('nombre').value, telefono: $('telefono').value, email: $('email').value, direccion: $('direccion').value, cp: $('cp').value.trim(), notas_dir: $('notas').value,
       hora: $('hora').value, pago: st.pago, cambio: st.pago === 'efectivo' ? $('cambio').value.replace(',', '.').replace(/[^\d.]/g, '') : '',
       comentarios: $('comentarios').value, privacidad: true, web: $('web').value,
       items: Object.keys(st.cart).map(function(id){ return { id: id, uds: st.cart[id] }; }) };
     var b = $('enviar'); b.disabled = true; b.textContent = 'ENVIANDO…';
     try {
       var j = await api('/api/pedidos/crear', d);
-      try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, direccion: d.direccion, cp: d.cp, notas: d.notas_dir, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
+      try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, telefono: d.telefono, email: d.email, direccion: d.direccion, cp: d.cp, notas: d.notas_dir, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
       if (window.HK_STATS) HK_STATS.evento('pedido');
       location.href = '/pedir/pedido?t=' + j.token;
     } catch (ex) { fallo(ex.message); b.disabled = false; pintar(); }

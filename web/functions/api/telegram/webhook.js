@@ -7,7 +7,7 @@
 import { db, tabla, HttpError } from '../reservas/_comun.js';
 import { cambiarEstado } from '../reservas/_estado.js';
 import { tg, textoReserva, mismoSecreto, secretoWebhook } from '../reservas/_telegram.js';
-import { cambiarEstado as estadoPedido, textoTelegram as textoPedido, botonesTelegram as botonesPedido } from '../pedidos/_pedidos.js';
+import { cambiarEstado as estadoPedido, textoTelegram as textoPedido, botonesTelegram as botonesPedido, avisarCliente } from '../pedidos/_pedidos.js';
 
 const vale = () => new Response('ok', { status: 200 });
 const lista = (v) => String(v || '').split(/[\s,;]+/).map((s) => s.trim()).filter(Boolean);
@@ -83,5 +83,6 @@ async function botonPedido(ctx, cq, m, responder) {
       .catch((e) => { if (!/not modified/i.test(e.descripcion || '')) console.error(e.message); });
   }
   if (res.ya) return responder('Ya estaba gestionado');
+  ctx.waitUntil(avisarCliente(env, res.pedido, new URL(ctx.request.url).origin)); // email al cliente
   return responder(RESPUESTA[estado] + (estado === 'aceptado' ? ` · ${p.minutos} min` : ''));
 }

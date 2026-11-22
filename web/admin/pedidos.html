@@ -138,7 +138,7 @@ details.caja summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacin
       : p.estado === 'en_camino' ? b('entregado', '✔️ ENTREGADO', 'oro') + b('cancelado', 'CANCELAR') : '';
     return '<div class="ped ' + p.estado + '"><h3>Nº ' + p.id + ' · ' + (p.tipo === 'domicilio' ? '🛵 Domicilio' : '🥡 Recoger') + ' <span class="chip e-' + p.estado + '">' + EST[p.estado] + (p.minutos && p.estado !== 'pendiente' ? ' · ' + p.minutos + ' MIN' : '') + '</span></h3>'
       + '<p><b style="color:var(--txt-hi)">' + (p.hora ? 'Para las ' + p.hora : 'Lo antes posible') + '</b> · pedido a las ' + horaLocal(p.creado) + '</p>'
-      + '<p>' + esc(p.nombre) + ' · <a href="tel:' + esc(p.telefono) + '">' + esc(p.telefono.replace(/^\+34/, '')) + '</a></p>'
+      + '<p>' + esc(p.nombre) + ' · <a href="tel:' + esc(p.telefono) + '">' + esc(p.telefono.replace(/^\+34/, '')) + '</a>' + (p.email ? ' · ' + esc(p.email) : '') + ' · ' + (p.previos ? '⭐ habitual (' + p.previos + ')' : '<b style="color:#E9B949">🆕 cliente nuevo</b>') + '</p>'
       + (p.tipo === 'domicilio' ? '<p>📍 ' + esc(p.direccion) + ', ' + esc(p.cp) + (p.notas_dir ? ' · ' + esc(p.notas_dir) : '') + ' · <a target="_blank" rel="noopener" href="https://maps.google.com/?q=' + encodeURIComponent(p.direccion + ', ' + p.cp) + '">mapa</a></p>' : '')
       + '<ul>' + p.items.map(function(x){ return '<li>' + x.uds + ' × ' + (x.num ? x.num + '. ' : '') + esc(x.nombre) + '</li>'; }).join('') + '</ul>'
       + (p.comentarios ? '<p style="color:#E9B949">💬 ' + esc(p.comentarios) + '</p>' : '')
