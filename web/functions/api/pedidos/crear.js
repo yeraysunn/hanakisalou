@@ -25,6 +25,7 @@ export const onRequestPost = handle(async (ctx) => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new HttpError(400, 'Escribe un email válido.');
   let direccion = null, cp = null, notas = null, lat = null, lng = null;
   if (tipo === 'domicilio') {
+    if (!d.confirma_ubicacion) throw new HttpError(400, 'Confirma que la dirección y el punto del mapa son correctos.');
     ({ direccion, cp, lat, lng } = await comprobarDireccion(limpio(d.direccion, 160))); // solo portales reales de Salou
     notas = limpio(d.notas_dir, 160) || null;
   }
