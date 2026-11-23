@@ -8,7 +8,7 @@ export { json, db, handle, body, HttpError, normalizarTelefono, nuevoToken, esca
 export { hoyMadrid, horaMadrid, CATALOGO, POR_ID, CATEGORIAS };
 
 // ---------- reglas del negocio ----------
-export const MINIMO = 1500;          // pedido mínimo (productos), céntimos
+export const MINIMO = 1500;          // pedido mínimo a domicilio (productos), céntimos. Para recoger no hay mínimo.
 export const ENVIO = 250;            // gastos de envío
 export const ENVIO_GRATIS = 2500;    // envío gratis a partir de este subtotal
 export const MUNICIPIO = { nombre: 'Salou', codigo: '43905' }; // solo se reparte dentro del municipio de Salou (dirección comprobada en CartoCiudad)
@@ -167,7 +167,7 @@ export function calcular(lineas, tipo, aj) {
   }
   if (!items.length) throw new HttpError(400, 'Tu pedido está vacío.');
   const subtotal = items.reduce((s, x) => s + x.precio * x.uds, 0);
-  if (subtotal < MINIMO) throw new HttpError(400, `El pedido mínimo es de ${euros(MINIMO)} (llevas ${euros(subtotal)}).`);
+  if (tipo === 'domicilio' && subtotal < MINIMO) throw new HttpError(400, `El pedido mínimo a domicilio es de ${euros(MINIMO)} (llevas ${euros(subtotal)}). Para recoger en el local no hay mínimo.`);
   const envio = tipo === 'domicilio' && subtotal < ENVIO_GRATIS ? ENVIO : 0;
   return { items, subtotal, envio, total: subtotal + envio, alcohol: items.some((x) => x.alcohol) };
 }
