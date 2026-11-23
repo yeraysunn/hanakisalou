@@ -1,11 +1,14 @@
 // POST /api/fidelidad/registro — alta de un cliente nuevo
 import { json, dbListo, handle, body, HttpError, nuevoToken, nuevoCodigo, normalizarTelefono, tarjetaPublica, listaPremios } from './_lib.js';
+import { limitar, comprobarTurnstile } from '../_seguridad.js';
 
 export const onRequestPost = handle(async ({ request, env }) => {
   const DB = await dbListo(env);
   const d = await body(request);
 
   if (d.web) return json({ ok: true }); // campo trampa anti-bots
+  await comprobarTurnstile(env, request, d.ts);
+  await limitar(env, DB, request, 'registro', 5, 3600);
 
   const nombre = String(d.nombre || '').trim().replace(/\s+/g, ' ').slice(0, 60);
   const telefono = normalizarTelefono(d.telefono);

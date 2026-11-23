@@ -108,6 +108,7 @@ body{padding-bottom:110px}
 h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);margin:22px 0 10px;text-transform:uppercase}
 </style>
 <script src="/estadisticas.js" defer></script>
+<script src="/antibots.js" defer></script>
 </head>
 <body>
 <div class="top">
@@ -420,12 +421,13 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
   $('cfSi').onclick = async function(){
     if (!pendiente) return;
     var d = pendiente, b = $('cfSi'); b.disabled = true; b.textContent = 'ENVIANDO…';
+    d.ts = window.HK_ANTIBOTS ? await HK_ANTIBOTS.token() : '';
     try {
       var j = await api('/api/pedidos/crear', d);
       try { localStorage.setItem('hk-pedido-datos', JSON.stringify({ nombre: d.nombre, telefono: d.telefono, email: d.email, tipo: d.tipo })); localStorage.removeItem('hk-pedido'); localStorage.setItem('hk-ultimo-pedido', j.token); } catch (x) {}
       if (window.HK_STATS) HK_STATS.evento('pedido');
       location.href = '/pedir/pedido?t=' + j.token;
-    } catch (ex) { $('confirmar').hidden = true; pendiente = null; fallo(ex.message); pintar(); }
+    } catch (ex) { if (window.HK_ANTIBOTS) HK_ANTIBOTS.reset(); $('confirmar').hidden = true; pendiente = null; fallo(ex.message); pintar(); }
   };
 })();
 </script>

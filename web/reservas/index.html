@@ -69,6 +69,7 @@
 .aviso-cocina{margin:12px 0 0;padding:12px 14px;border-left:3px solid var(--rojo);background:var(--bg2);font-size:14px;line-height:1.5;color:var(--txt)}.aviso-cocina b{color:var(--txt-hi);font-weight:600}
 </style>
 <script src="/estadisticas.js" defer></script>
+<script src="/antibots.js" defer></script>
 </head>
 <body>
 <main class="rsv">
@@ -228,6 +229,7 @@
     var d = { fecha: fecha.value, hora: st.hora, adultos: st.adultos, ninos: st.ninos, bebes: st.bebes,
       nombre: f.nombre.value, telefono: f.telefono.value, email: f.email.value, comentarios: f.comentarios.value,
       cumple: f.cumple.checked, trona: f.trona.checked, carrito: f.carrito.checked, privacidad: true, web: f.web.value };
+    d.ts = window.HK_ANTIBOTS ? await HK_ANTIBOTS.token() : '';
     btn.disabled = true; btn.textContent = 'ENVIANDO…';
     try {
       var r = await fetch('/api/reservas/crear', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(d) });
@@ -244,7 +246,7 @@
       if (FID_ABIERTA) { if (tok) { $('h-tarjeta').href = '/fidelidad/tarjeta.html?t=' + tok; $('h-tarjeta').hidden = false; } else $('h-socio').hidden = false; }
       if (window.HK_STATS) HK_STATS.evento('reserva');
       $('form-wrap').hidden = true; $('hecho').hidden = false; scrollTo(0, 0);
-    } catch (ex) { fallo(ex.message); delete cerradas[fecha.value]; pintarHoras(); btn.disabled = false; btn.innerHTML = 'RESERVAR <span aria-hidden="true">→</span>'; }
+    } catch (ex) { if (window.HK_ANTIBOTS) HK_ANTIBOTS.reset(); fallo(ex.message); delete cerradas[fecha.value]; pintarHoras(); btn.disabled = false; btn.innerHTML = 'RESERVAR <span aria-hidden="true">→</span>'; }
   });
 })();
 </script>

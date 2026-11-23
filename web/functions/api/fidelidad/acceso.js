@@ -3,6 +3,7 @@
 //   {email, codigo}  → si el código es correcto, devuelve el token de la tarjeta
 // Envío de emails con Resend (variables RESEND_API_KEY y, opcional, EMAIL_FROM).
 import { json, db, handle, body, HttpError } from './_lib.js';
+import { limitar } from '../_seguridad.js';
 
 const MINUTOS_VALIDEZ = 10;
 const MAX_INTENTOS = 5;
@@ -63,6 +64,7 @@ export const onRequestPost = handle(async ({ request, env }) => {
   const email = String(d.email || '').trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new HttpError(400, 'Escribe un email válido.');
   await tabla(DB);
+  await limitar(env, DB, request, 'acceso', 15, 3600);
 
   const socio = await DB.prepare('SELECT id, token, nombre, email FROM socios WHERE lower(trim(email)) = ? ORDER BY id DESC LIMIT 1').bind(email).first();
 

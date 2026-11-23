@@ -2,6 +2,7 @@
 // El total se recalcula aquí con los precios de _catalogo.js. Pago al recibir: efectivo o tarjeta (datáfono).
 // Aviso al local por Telegram (marca cliente nuevo / habitual) y email «Hemos recibido tu pedido» al cliente.
 import { sesionValida } from '../fidelidad/_lib.js';
+import { limitar, comprobarTurnstile } from '../_seguridad.js';
 import { horarioPrueba } from './_pedidos.js';
 import { json, db, handle, body, HttpError, nuevoToken, comprobarDireccion, alcoholPermitido, HORA_LIMITE_ALCOHOL, normalizarTelefono, tablas, ajustes, horario, calcular, avisarTelegram, avisarCliente, previos, hoyMadrid, MAX_PENDIENTES, euros } from './_pedidos.js';
 
@@ -10,6 +11,8 @@ export const onRequestPost = handle(async (ctx) => {
   const d = await body(request);
   if (d.web) return json({ ok: true });
   const DB = db(env); await tablas(DB);
+  await comprobarTurnstile(env, request, d.ts);
+  await limitar(env, DB, request, 'pedido', 6, 3600, { mensaje: 'Has enviado muchos pedidos seguidos. Si necesitas otro, llámanos al 613 261 135.' });
   const aj = await ajustes(DB);
   const prueba = await sesionValida(request, env).catch(() => false);
   const h = prueba ? horarioPrueba() : horario(aj);

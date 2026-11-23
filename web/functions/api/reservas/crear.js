@@ -1,12 +1,15 @@
 // POST /api/reservas/crear — reserva desde la web
 import { json, db, handle, body, HttpError, normalizarTelefono, enviarEmail, tabla, hoyMadrid, emailReserva, validarDatos, nuevoToken } from './_comun.js';
 import { notificarTelegram } from './_telegram.js';
+import { limitar, comprobarTurnstile } from '../_seguridad.js';
 
 export const onRequestPost = handle(async (ctx) => {
   const { request, env } = ctx;
   const DB = db(env);
   const d = await body(request);
   if (d.web) return json({ ok: true }); // trampa anti-bots
+  await comprobarTurnstile(env, request, d.ts);
+  await limitar(env, DB, request, 'reserva', 6, 3600, { mensaje: 'Has enviado muchas reservas seguidas. Si necesitas otra, llámanos al 613 261 135.' });
   await tabla(DB);
 
   const nombre = String(d.nombre || '').trim().replace(/\s+/g, ' ').slice(0, 60);

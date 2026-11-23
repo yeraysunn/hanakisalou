@@ -19,6 +19,7 @@
 .tnd b{font:700 28px/1 var(--num);color:var(--rojo);white-space:nowrap}
 .tnd b.prox{font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 </style>
+<script src="/antibots.js" defer></script>
 </head>
 <body>
 <main class="wrap">
@@ -124,6 +125,7 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email.trim())) return fallo('Escribe un email válido (lo necesitas para recuperar tu tarjeta).');
     if (!d.privacidad) return fallo('Tienes que aceptar la política de privacidad.');
     btn.disabled = true; btn.textContent = 'CREANDO…';
+    d.ts = window.HK_ANTIBOTS ? await HK_ANTIBOTS.token() : '';
     try {
       var r = await fetch('/api/fidelidad/registro', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(d) });
       var j = await r.json().catch(function(){ return {}; });
