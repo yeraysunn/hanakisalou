@@ -84,7 +84,10 @@ body{padding-bottom:110px}
 .ent__opc{display:grid;gap:12px;margin-bottom:18px}
 .ent__opc button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:16px;align-items:center;text-align:left;background:var(--bg2);border:1px solid var(--linea);border-radius:20px;padding:20px 18px;color:var(--txt);cursor:pointer;transition:border-color .25s,transform .25s}
 .ent__opc button:hover{border-color:var(--rojo);transform:translateY(-2px)}
-.ent__ico{grid-row:span 2;font-size:38px;line-height:1}
+.ent__ico{grid-row:span 2;display:grid;place-items:center;width:62px;height:62px;border-radius:16px;background:var(--bg)}
+.ent__ico svg,.entrega svg{fill:none;stroke:var(--txt-hi);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.ent__ico svg .a,.entrega svg .a{stroke:var(--rojo)}
+.ent__ico svg{width:44px;height:44px}
+.entrega__t{display:flex;align-items:center;gap:12px}.entrega svg.mini{width:34px;height:34px;flex:none}
 .ent__opc b{font:900 28px/1 var(--disp);text-transform:uppercase;color:var(--txt-hi)}
 .ent__opc small{font-size:13.5px;color:var(--muted);margin-top:4px}
 .ent__atras{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer;padding:0;margin:0 0 14px}
@@ -169,15 +172,15 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
       <div class="etq">Pedir online</div>
       <h2 class="ent__h" id="entTit">¿Cómo quieres<br>tu pedido<em>?</em></h2>
       <div class="ent__opc">
-        <button type="button" data-modo="domicilio"><span class="ent__ico">🛵</span><b>A domicilio</b><small>Te lo llevamos a casa en Salou · envío 2,50 €, gratis desde 25 €</small></button>
-        <button type="button" data-modo="recoger"><span class="ent__ico">🥡</span><b>Recoger en el local</b><small>Carrer Major, 6 · Salou · sin gastos de envío</small></button>
+        <button type="button" data-modo="domicilio"><span class="ent__ico"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="11" cy="36" r="5"/><circle cx="38" cy="36" r="5"/><rect class="a" x="5.5" y="11" width="14" height="10.5" rx="2"/><path class="a" d="M5.5 16.25h14"/><path d="M5 33.5c0-5.5 3.8-9 9.5-9h9.5l1 8.5H31"/><path d="M31 33c1.8-6.5 2.4-13 1.6-19.5"/><path d="M29 13.5h7"/><path d="M34 21.5l4 14.5"/></svg></span><b>A domicilio</b><small>Te lo llevamos a casa en Salou · envío 2,50 €, gratis desde 25 €</small></button>
+        <button type="button" data-modo="recoger"><span class="ent__ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10.5 17h27l-3.4 23.3a2 2 0 0 1-2 1.7H15.9a2 2 0 0 1-2-1.7z"/><path d="M10.5 17l4.5-7.5h18l4.5 7.5"/><path class="a" d="M19 9.5c0-5.5 10-5.5 10 0"/><circle class="a" cx="24" cy="29" r="4.5"/></svg></span><b>Recoger en el local</b><small>Carrer Major, 6 · Salou · sin gastos de envío</small></button>
       </div>
       <p class="nota">Pedido mínimo 15 €. Pagas al recibir: en efectivo o con tarjeta.</p>
     </section>
 
     <section id="entDom" hidden>
       <button type="button" class="ent__atras" data-atras>← Volver</button>
-      <div class="etq">🛵 A domicilio</div>
+      <div class="etq">A domicilio</div>
       <h2 class="ent__h">¿Dónde te<br>lo llevamos<em>?</em></h2>
         <div class="campo dir"><label for="direccion">DIRECCIÓN EN SALOU (CALLE Y NÚMERO)</label>
           <input id="direccion" autocomplete="off" maxlength="160" placeholder="Ej.: Via Roma 10" role="combobox" aria-autocomplete="list" aria-controls="dirLista" aria-expanded="false">
@@ -193,7 +196,7 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
 
     <section id="entRec" hidden>
       <button type="button" class="ent__atras" data-atras>← Volver</button>
-      <div class="etq">🥡 Recoger en el local</div>
+      <div class="etq">Recoger en el local</div>
       <h2 class="ent__h">Te esperamos<br>en Hanaki<em>.</em></h2>
       <div class="ent__local"><b>Carrer Major, 6 · 43840 Salou</b><span>Pedidos de martes a domingo · 12:30–15:45 y 19:30–22:45 · lunes cerrado</span></div>
       <div class="ent__mapa"><iframe id="mapaLocal" title="Mapa del restaurante" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
@@ -209,6 +212,7 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
   var eur = function(c){ return (c / 100).toFixed(2).replace('.', ',') + ' €'; };
   var ALK = {G:'Gluten',C:'Crustáceos',H:'Huevo',P:'Pescado',Ca:'Cacahuetes',S:'Soja',L:'Lactosa',F:'Frutos de cáscara',Ap:'Apio',Mo:'Mostaza',Se:'Sésamo',Su:'Sulfitos',Al:'Altramuces',M:'Moluscos',Pi:'Picante',V:'Vegetariano'};
   var ALC = {G:'gluten',C:'crustaceos',H:'huevo',P:'pescado',Ca:'cacahuetes',S:'soja',L:'lactosa',F:'frutos',Ap:'apio',Mo:'mostaza',Se:'sesamo',Su:'sulfitos',Al:'altramuces',M:'moluscos',Pi:'picante',V:'vegetariano'};
+  var ICO_MOTO = "<svg class=\"mini\" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"36\" r=\"5\"/><circle cx=\"38\" cy=\"36\" r=\"5\"/><rect class=\"a\" x=\"5.5\" y=\"11\" width=\"14\" height=\"10.5\" rx=\"2\"/><path class=\"a\" d=\"M5.5 16.25h14\"/><path d=\"M5 33.5c0-5.5 3.8-9 9.5-9h9.5l1 8.5H31\"/><path d=\"M31 33c1.8-6.5 2.4-13 1.6-19.5\"/><path d=\"M29 13.5h7\"/><path d=\"M34 21.5l4 14.5\"/></svg>", ICO_CAJA = "<svg class=\"mini\" viewBox=\"0 0 48 48\" aria-hidden=\"true\"><path d=\"M10.5 17h27l-3.4 23.3a2 2 0 0 1-2 1.7H15.9a2 2 0 0 1-2-1.7z\"/><path d=\"M10.5 17l4.5-7.5h18l4.5 7.5\"/><path class=\"a\" d=\"M19 9.5c0-5.5 10-5.5 10 0\"/><circle class=\"a\" cx=\"24\" cy=\"29\" r=\"4.5\"/></svg>";
   var info = null, porId = {}, st = { cart: {}, tipo: 'domicilio', pago: 'efectivo' };
   try { st.cart = JSON.parse(localStorage.getItem('hk-pedido') || '{}') || {}; } catch (e) {}
   try { var dd = JSON.parse(localStorage.getItem('hk-pedido-datos') || '{}'); ['nombre','telefono','email'].forEach(function(k){ if (dd[k]) $(k).value = dd[k]; }); } catch (e) {}
@@ -264,8 +268,8 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
     $('falta').textContent = msg; $('falta').hidden = !msg; $('falta').style.color = sub < info.minimo ? 'var(--rojo)' : 'var(--muted)';
     document.querySelectorAll('[data-pago]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.pago === st.pago); });
     var resumen = !st.ent ? '<span>Elige cómo quieres tu pedido</span>'
-      : st.ent.tipo === 'domicilio' ? '<span>🛵 <b>A domicilio</b> · ' + esc(st.ent.dir) + (st.ent.notas ? ', ' + esc(st.ent.notas) : '') + '<small>Salou · envío 2,50 €, gratis desde 25 €</small></span>'
-      : '<span>🥡 <b>Recoger en el local</b> · Carrer Major, 6<small>Salou · sin gastos de envío</small></span>';
+      : st.ent.tipo === 'domicilio' ? '<span class="entrega__t">' + ICO_MOTO + '<span><b>A domicilio</b> · ' + esc(st.ent.dir) + (st.ent.notas ? ', ' + esc(st.ent.notas) : '') + '<small>Salou · envío 2,50 €, gratis desde 25 €</small></span></span>'
+      : '<span class="entrega__t">' + ICO_CAJA + '<span><b>Recoger en el local</b> · Carrer Major, 6<small>Salou · sin gastos de envío</small></span></span>';
     document.querySelectorAll('[data-entrega]').forEach(function(e){ e.innerHTML = resumen + '<button type="button" data-cambiar>' + (st.ent ? 'CAMBIAR' : 'ELEGIR') + '</button>'; });
     $('cambioBox').hidden = st.pago !== 'efectivo'; $('tarjetaTxt').hidden = st.pago !== 'tarjeta';
     $('tarjetaTxt').textContent = st.tipo === 'domicilio' ? 'El repartidor lleva datáfono.' : 'Pagas con tarjeta al recoger.';
