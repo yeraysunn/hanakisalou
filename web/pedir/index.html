@@ -351,7 +351,11 @@ h4{font-size:11.5px;font-weight:600;letter-spacing:.18em;color:var(--txt-hi);mar
   $('entOkDom').onclick = function(){ if (!st.dir || !$('confirmaDir').checked) return; guardarEntrega({ tipo: 'domicilio', dir: st.dir, lat: st.lat, lng: st.lng, notas: $('notas').value.trim() }); };
   $('entOkRec').onclick = function(){ guardarEntrega({ tipo: 'recoger' }); };
   $('entCerrar').onclick = cerrarEntrada;
-  if (!st.ent) abrirEntrada();
+  // Desde la ventana de la portada: /pedir/?modo=domicilio | recoger
+  var modoQ = new URLSearchParams(location.search).get('modo');
+  if (modoQ === 'domicilio' && !(st.ent && st.ent.tipo === 'domicilio')) abrirEntrada('entDom');
+  else if (modoQ === 'recoger' && !(st.ent && st.ent.tipo === 'recoger')) abrirEntrada('entRec');
+  else if (!st.ent) abrirEntrada();
 
   $('f').addEventListener('submit', async function(e){
     e.preventDefault(); err.hidden = true;
